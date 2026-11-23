@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="وجهتي: دليل سياحي تفاعلي لمدن السعودية بخريطة حقيقية ثلاثية الأبعاد">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<title>وجهتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Reem+Kufi:wght@500;600;700&display=swap">
+<style>
+/* Layout: one app shell — top bar on desktop, bottom tab bar on phones; each screen is a centred column of soft cards */
+:root{
+  --bg:#F3F6F4; --surface:#FFFFFF; --surface2:#EAF1EE; --line:#DCE6E1;
+  --ink:#12241F; --muted:#5C6F69; --green:#0E5A4A; --green2:#167A63; --green-soft:#DDEFE8;
+  --sand:#C49A5A; --sand-soft:#F5EAD8; --rose:#D0645A;
+  --shadow:0 10px 30px rgba(14,90,74,.08);
+  --f:"IBM Plex Sans Arabic",Tahoma,sans-serif; --fd:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --r:20px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D1715; --surface:#14211E; --surface2:#1A2B27; --line:#263934;
+  --ink:#E9F2EF; --muted:#9DB2AB; --green:#5FC7A6; --green2:#7ED6BA; --green-soft:#1B3A32;
+  --sand:#E0BC80; --sand-soft:#2E2618; --rose:#EE8A80; --shadow:0 10px 30px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1715; --surface:#14211E; --surface2:#1A2B27; --line:#263934;
+  --ink:#E9F2EF; --muted:#9DB2AB; --green:#5FC7A6; --green2:#7ED6BA; --green-soft:#1B3A32;
+  --sand:#E0BC80; --sand-soft:#2E2618; --rose:#EE8A80; --shadow:0 10px 30px rgba(0,0,0,.3); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:15.5px;line-height:1.75;direction:rtl;margin:0;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--green2);outline-offset:2px}
+.ico{width:1.2em;height:1.2em;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+.top-in{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:18px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--green);font-family:var(--fd);font-size:26px;font-weight:700;line-height:1}
+.logo svg{width:30px;height:30px}
+.nav{display:flex;gap:4px;margin-inline-start:auto}
+.nav a{display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-weight:500;font-size:14.5px;padding:7px 14px;border-radius:999px}
+.nav a[aria-current="page"]{background:var(--green-soft);color:var(--green);font-weight:600}
+.nav a:hover{color:var(--green)}
+.badge{min-width:18px;height:18px;border-radius:9px;background:var(--rose);color:#fff;font-size:11px;display:inline-grid;place-items:center;padding:0 5px;font-weight:700}
+
+/* bottom tab bar (phones) */
+.tabs{display:none}
+@media (max-width:760px){
+  .nav{display:none}
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;inset:auto 0 0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+  .tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--muted);text-decoration:none;padding:4px 0;position:relative}
+  .tabs a .ico{width:22px;height:22px}
+  .tabs a[aria-current="page"]{color:var(--green);font-weight:600}
+  .tabs .badge{position:absolute;top:0;left:calc(50% - 22px)}
+  main{padding-bottom:84px!important}
+}
+
+main{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 48px}
+.screen{display:flex;flex-direction:column;gap:26px;animation:fade .35s ease}
+@keyframes fade{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1,h2,h3{margin:0;text-wrap:balance}
+h2{font-family:var(--fd);font-weight:600;font-size:22px;color:var(--ink)}
+.sec-h{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sec-h p{margin:0;color:var(--muted);font-size:14px}
+.link{color:var(--green);font-weight:600;text-decoration:none;font-size:14.5px;display:inline-flex;align-items:center;gap:4px;background:none;border:0;cursor:pointer;padding:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;border-radius:999px;padding:11px 20px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .15s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--green);color:var(--surface)}
+.btn.pri:hover{background:var(--green2)}
+.btn.sec{background:var(--sand-soft);color:var(--ink)}
+.btn.ghost{background:var(--surface);color:var(--green);border:1px solid var(--line)}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:6px 15px;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--surface);font-weight:600}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.tag{font-size:12px;font-weight:600;padding:1px 10px;border-radius:999px;background:var(--green-soft);color:var(--green)}
+.tag.s{background:var(--sand-soft);color:var(--sand)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:clamp(22px,5vw,48px);background:#0E5A4A;color:#fff;display:flex;align-items:center;min-height:460px}
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(to left,rgba(9,52,43,.94) 0%,rgba(9,52,43,.82) 38%,rgba(9,52,43,.25) 62%,rgba(9,52,43,0) 80%)}
+.hero-txt{position:relative;z-index:2;max-width:520px}
+.hero h1{font-family:var(--fd);font-size:clamp(30px,6vw,46px);line-height:1.35;font-weight:700}
+.hero h1 span{color:#F6D69B}
+.hero p{margin:6px 0 18px;color:#D7EEE6;max-width:40ch}
+.search{position:relative;max-width:460px}
+.search input{width:100%;border:0;border-radius:16px;padding:14px 48px 14px 16px;background:#fff;color:#12241F;font-size:16px;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.search input::placeholder{color:#7C8E88}
+.search .ico{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#0E5A4A;width:22px;height:22px}
+.sugg{position:absolute;inset:calc(100% + 6px) 0 auto;background:var(--surface);color:var(--ink);border-radius:16px;box-shadow:0 16px 40px rgba(0,0,0,.18);overflow:hidden;z-index:5}
+.sugg button{display:flex;width:100%;align-items:center;gap:10px;border:0;background:none;padding:10px 14px;text-align:right;cursor:pointer}
+.sugg button:hover,.sugg button.on{background:var(--surface2)}
+.sugg small{color:var(--muted);margin-inline-start:auto}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.hero .btn.pri{background:#F6D69B;color:#12241F}
+.hero .btn.ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+.hero-art{position:absolute;inset:0;z-index:0}
+.hero-art svg{display:block;width:100%;height:100%}
+.hero-art .cap{position:absolute;z-index:3;left:max(16px,env(safe-area-inset-left,0px));bottom:16px;background:rgba(8,24,20,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:999px;padding:4px 16px;font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;opacity:0;transition:opacity .6s}
+.hero-art .cap.on{opacity:1}
+.hero-art .cap small{font-weight:400;opacity:.8;margin-inline-start:6px}
+.irisScene{transition:opacity .9s ease}
+@media (max-width:760px){.hero{min-height:600px;align-items:flex-end;border-radius:24px}.hero::after{background:linear-gradient(to bottom,rgba(9,52,43,0) 22%,rgba(9,52,43,.78) 50%,rgba(9,52,43,.95) 72%)}.hero-art .cap{bottom:auto;top:14px;left:14px}}
+
+/* map */
+.mapwrap{display:grid;grid-template-columns:1.35fr 1fr;gap:16px}
+@media (max-width:860px){.mapwrap{grid-template-columns:1fr}}
+.map{padding:12px;position:relative;min-width:0}
+.map>svg{display:block;width:100%;height:auto;direction:ltr}
+.land{fill:var(--green-soft);stroke:var(--green);stroke-width:2;stroke-linejoin:round}
+.sea-lbl{fill:var(--muted);font-size:20px;font-family:var(--f);opacity:.7}
+.pin{cursor:pointer}
+.pin .halo{fill:var(--green);opacity:.18;transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite}
+.pin .dot{fill:var(--green);stroke:var(--surface);stroke-width:4;transition:r .2s}
+.pin text{font-family:var(--f);font-size:24px;font-weight:600;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:6px;stroke-linejoin:round}
+.pin:hover .dot,.pin.on .dot{fill:var(--sand)}
+.pin.on .halo{fill:var(--sand);opacity:.35}
+.pin.dim{opacity:.25}
+@media (max-width:600px){.pin text{font-size:40px;stroke-width:9px}.pin .dot{r:15px}.sea-lbl{font-size:28px}}
+@keyframes pulse{0%{transform:scale(.6);opacity:.35}100%{transform:scale(1.8);opacity:0}}
+.maphint{position:absolute;top:14px;right:16px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.preview{overflow:hidden;display:flex;flex-direction:column}
+.preview .art{aspect-ratio:16/9;max-width:100%}
+.preview .art svg{display:block;width:100%;height:100%}
+.preview .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.preview h3{font-family:var(--fd);font-size:24px;font-weight:600}
+.preview p{margin:0;color:var(--muted);font-size:14.5px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mini-places{display:flex;flex-direction:column;gap:6px;margin:4px 0 6px;padding:0;list-style:none}
+.mini-places li{display:flex;align-items:center;gap:8px;font-size:14px}
+.mini-places li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--sand);flex:none}
+
+/* months */
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+@media (max-width:700px){.months{grid-template-columns:repeat(6,1fr)}}
+.month{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 2px;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted)}
+.month[aria-pressed="true"]{background:var(--sand);border-color:var(--sand);color:#fff;font-weight:700}
+.month-res{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.mres{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:999px;background:var(--surface);border:1px solid var(--line);text-decoration:none;color:var(--ink);font-weight:500;font-size:14.5px}
+.mres i{width:30px;height:30px;border-radius:50%;overflow:hidden;display:block}
+.mres i svg{width:100%;height:100%;display:block}
+
+/* city cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.ccard{display:flex;flex-direction:column;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.ccard:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(14,90,74,.14)}
+.ccard .art{aspect-ratio:16/10;position:relative;max-width:100%}
+.ccard .art svg{display:block;width:100%;height:100%}
+.ccard .reg{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.88);color:#12241F;font-size:12px;font-weight:600;padding:1px 10px;border-radius:999px}
+.ccard .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+.ccard h3{font-family:var(--fd);font-size:21px;font-weight:600}
+.ccard p{margin:0;color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ccard .meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px;font-size:13px;color:var(--muted)}
+.empty{padding:36px 20px;text-align:center;color:var(--muted);border:1.5px dashed var(--line);border-radius:var(--r)}
+.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+.listbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.listbar .search{flex:1;min-width:220px;max-width:none}
+.listbar .search input{box-shadow:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding-block:11px}
+
+/* details */
+.back{align-self:flex-start}
+.banner{position:relative;border-radius:28px;overflow:hidden;aspect-ratio:21/8;min-height:220px;max-width:100%}
+.banner svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.banner .over{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(16px,4vw,30px);color:#fff;gap:6px}
+.banner h1{font-family:var(--fd);font-size:clamp(34px,7vw,54px);font-weight:700;line-height:1.2}
+.banner .row .tag{background:rgba(255,255,255,.2);color:#fff;backdrop-filter:blur(4px)}
+.dgrid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.dgrid{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+.pad{padding:18px 20px}
+.pad h2{font-size:19px;margin-bottom:8px}
+.pad p{margin:0}
+.yearbar{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:8px}
+.yearbar span{height:36px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-size:11px;color:var(--muted)}
+.yearbar span.good{background:var(--green);color:var(--surface);font-weight:700}
+.yearbar span.now{outline:2px solid var(--sand);outline-offset:1px}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--green);margin-inline-end:5px;vertical-align:middle}
+.places{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.place{padding:14px 16px;display:flex;flex-direction:column;gap:6px;position:relative}
+.place h3{font-size:16.5px;font-weight:700;padding-inline-end:36px}
+.place p{margin:0;color:var(--muted);font-size:14px}
+.place .when{display:flex;gap:6px;margin-top:auto;padding-top:6px}
+.heart{position:absolute;top:10px;left:10px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--muted);transition:transform .15s}
+.heart:active{transform:scale(.85)}
+.heart[aria-pressed="true"]{color:var(--rose);border-color:var(--rose);background:color-mix(in srgb,var(--rose) 10%,var(--surface))}
+.heart[aria-pressed="true"] .ico{fill:currentColor}
+.fact{background:var(--sand-soft);border-color:transparent}
+.fact h2{color:var(--sand)}
+.side-cta{display:flex;flex-direction:column;gap:10px}
+.mine{font-size:12px;color:var(--sand);font-weight:600}
+
+/* planner */
+.planner{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.planner{grid-template-columns:1fr}}
+.form{padding:18px;display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600;font-size:14px}
+.field select,.field input,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;font:inherit;color:var(--ink);width:100%}
+.days{display:flex;gap:6px}
+.days button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 0;cursor:pointer;font-weight:600}
+.days button[aria-pressed="true"]{background:var(--green);color:var(--surface);border-color:var(--green)}
+.day{padding:16px 18px}
+.day-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.day-h b{width:34px;height:34px;border-radius:50%;background:var(--green);color:var(--surface);display:grid;place-items:center;font-family:var(--fd);font-size:16px}
+.day-h h3{font-family:var(--fd);font-size:19px;font-weight:600}
+.slot{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px dashed var(--line)}
+.slot:first-of-type{border-top:0}
+.slot .t{font-size:13px;color:var(--sand);font-weight:700}
+.slot .n{font-weight:600}
+.slot .n small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+.x{border:0;background:var(--surface2);width:30px;height:30px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center}
+.plan-list{display:flex;flex-direction:column;gap:12px}
+
+/* favourites + admin */
+.fav{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:12px 14px}
+.fav i{width:56px;height:56px;border-radius:14px;overflow:hidden;display:block}
+.fav i svg{width:100%;height:100%;display:block}
+.fav b{display:block}
+.fav small{color:var(--muted)}
+.favs{display:flex;flex-direction:column;gap:10px}
+.admin{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media (max-width:860px){.admin{grid-template-columns:1fr}}
+.note{font-size:13px;color:var(--muted);margin:0}
+
+/* quiz modal */
+.modal{position:fixed;inset:0;z-index:40;background:rgba(6,20,16,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-left,0px))}
+.dialog{width:min(520px,100%);max-height:90vh;overflow:auto;background:var(--surface);border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:0 30px 60px rgba(0,0,0,.3);animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.95);opacity:.5}to{transform:none;opacity:1}}
+.dialog .steps{display:flex;gap:6px}
+.dialog .steps i{flex:1;height:5px;border-radius:3px;background:var(--surface2)}
+.dialog .steps i.on{background:var(--green)}
+.dialog h2{font-size:21px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:600}
+.opt:hover{border-color:var(--green)}
+.opt .ico{width:28px;height:28px;color:var(--green)}
+.result{display:flex;flex-direction:column;gap:12px}
+.result .art{border-radius:18px;overflow:hidden;aspect-ratio:16/8;max-width:100%}
+.result .art svg{width:100%;height:100%;display:block}
+.toast{position:fixed;z-index:50;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:14px;font-weight:500;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:pop .2s ease}
+@media (min-width:761px){.toast{bottom:28px}}
+/* visitors' experiences */
+.comm{display:flex;flex-direction:column;gap:14px}
+.comm-sum{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.score{font-family:var(--fd);font-size:34px;font-weight:700;color:var(--green);line-height:1}
+.stars{color:var(--sand);letter-spacing:2px;font-size:18px}
+.compose{padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.compose textarea{width:100%;min-height:86px;resize:vertical;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:10px 12px;font:inherit}
+.moods{display:flex;gap:6px;flex-wrap:wrap}
+.mood{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.mood b{color:var(--sand);letter-spacing:1px}
+.mood[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.kinds{display:flex;gap:6px}
+.photo-pick{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.photo-pick label{cursor:pointer}
+.photo-pick input{position:absolute;opacity:0;width:1px;height:1px}
+.thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;border:1px solid var(--line)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.gallery button{padding:0;border:0;border-radius:14px;overflow:hidden;aspect-ratio:1;cursor:pointer;background:var(--surface2)}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.post{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.post-h{display:flex;align-items:center;gap:10px}
+.post-h img{width:34px;height:34px;border-radius:50%;flex:none}
+.post-h b{font-size:14.5px;display:block;line-height:1.3}
+.post-h small{color:var(--muted);font-size:12.5px}
+.post-h .stars{font-size:14px;margin-inline-start:auto}
+.post p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.post .pimg{border-radius:14px;max-height:320px;min-height:160px;width:100%;object-fit:cover;cursor:pointer;background:var(--surface2)}
+img[data-pic]:not([src]){visibility:hidden}
+.post .tag.tip{background:var(--sand-soft);color:var(--sand)}
+.post .del{align-self:flex-start;border:0;background:none;color:var(--muted);font-size:13px;cursor:pointer;padding:0}
+.post .del:hover{color:var(--rose)}
+.imgfail{display:grid;place-items:center;height:120px;border-radius:14px;background:var(--surface2);color:var(--muted);font-size:13px}
+.state{font-size:13.5px;color:var(--muted)}
+.lb{position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.85);display:grid;place-items:center;padding:20px;cursor:zoom-out}
+.lb img{max-width:100%;max-height:88vh;border-radius:14px}
+.rate-chip{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--sand)}
+footer{max-width:1120px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 30px max(16px,env(safe-area-inset-left,0px));color:var(--muted);font-size:13px;text-align:center}
+@media (max-width:760px){footer{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* real map (GitHub) */
+.gmapc{padding:0;overflow:hidden;position:relative;min-height:440px;min-width:0}
+.gmapc #gmap,.dmapc #dmap{position:absolute;inset:0}
+.dmapc{padding:0;overflow:hidden;position:relative;height:400px}
+.gmapc:fullscreen,.dmapc:fullscreen{border-radius:0}
+@media (max-width:860px){.gmapc{min-height:460px}.dmapc{height:360px}}
+.cm{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:0;cursor:pointer;font-family:var(--f)}
+.cm span{background:#fff;color:#12241F;font-weight:700;font-size:13px;line-height:1.5;padding:2px 11px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.22);white-space:nowrap}
+.cm i{width:16px;height:16px;border-radius:50%;background:#0E5A4A;border:3px solid #fff;box-shadow:0 0 0 6px rgba(14,90,74,.22),0 2px 6px rgba(0,0,0,.3)}
+.cm.on span{background:#0E5A4A;color:#fff}.cm.on i{background:#C49A5A;box-shadow:0 0 0 8px rgba(196,154,90,.3)}
+.msearch{position:absolute;z-index:3;top:10px;right:10px;width:min(340px,calc(100% - 64px))}
+.msearch .in{display:flex;align-items:center;gap:8px;background:#fff;color:#12241F;border-radius:999px;padding:0 14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.msearch input{flex:1;min-width:0;border:0;background:none;outline:none;padding:10px 0;font-size:14.5px;color:#12241F}
+.msugg{margin-top:6px;background:var(--surface);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.2);max-height:300px;overflow:auto;padding:6px}
+.msugg button{display:grid;grid-template-columns:auto 1fr;column-gap:8px;width:100%;text-align:start;background:none;border:0;border-radius:10px;padding:8px 10px;cursor:pointer}
+.msugg button:hover{background:var(--surface2)}
+.msugg button .ico{grid-row:span 2;color:var(--green);margin-top:3px}
+.msugg small{color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msugg .state{margin:6px 10px;font-size:13px}
+.mreset{position:absolute;z-index:2;bottom:38px;left:10px;background:#fff;color:#12241F;border:0;border-radius:999px;padding:6px 14px;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}
+.modes button{width:auto!important;padding:0 11px!important;font:600 12.5px var(--f)!important;color:#12241F}
+.modes button[aria-pressed="true"]{background:#0E5A4A!important;color:#fff}
+.maplibregl-ctrl-attrib{font-family:var(--f);direction:ltr}
+.mpop{font-family:var(--f);direction:rtl;color:#12241F;font-size:14px}
+.mpop b{display:block;margin-bottom:6px}.mpop div{display:flex;gap:10px;flex-wrap:wrap}.mpop a{color:#0E5A4A;font-weight:600}
+.dmap-h{position:absolute;z-index:2;top:10px;right:10px;background:rgba(255,255,255,.94);color:#12241F;border-radius:999px;padding:4px 14px;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.gl{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--green);text-decoration:none;background:none;border:0;padding:0 6px;cursor:pointer}
+.gl .ico{width:1em;height:1em}
+.place .when{flex-wrap:wrap;align-items:center}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="top-in">
+  <a class="logo" href="#home" aria-label="وجهتي الرئيسية"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2c-6 0-10.5 4.6-10.5 10.4C5.5 20 16 30 16 30s10.5-10 10.5-17.6C26.5 6.6 22 2 16 2z" fill="currentColor"/><path d="M10 15.5l3.2-4 2.6 3 2-2.4 4.2 3.4" fill="none" stroke="#F6D69B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>وجهتي</a>
+  <nav class="nav" id="nav"></nav>
+</div></header>
+<main id="view"></main>
+<nav class="tabs" id="tabs" aria-label="التنقل"></nav>
+<footer>وجهتي · دليل تفاعلي للسياحة في المدن السعودية</footer>
+<div id="layer"></div>
+
+<script>
+const MAP = {"W": 1000, "H": 836, "path": "M227.0 12.4 L217.9 20.2 L165.3 34.2 L163.8 35.7 L162.7 35.2 L125.1 45.5 L159.4 82.8 L160.4 84.3 L171.1 96.2 L155.9 104.6 L148.2 121.7 L113.5 128.3 L102.2 146.8 L82.0 163.0 L30.5 154.1 L29.3 154.3 L27.7 160.6 L24.7 170.1 L24.5 172.2 L23.4 177.5 L23.7 180.2 L21.5 189.0 L22.3 196.3 L15.6 212.9 L12.2 216.9 L11.9 221.4 L8.3 222.4 L8.6 226.0 L11.7 229.4 L20.1 229.2 L30.2 229.7 L36.1 235.6 L45.0 236.3 L52.6 248.1 L65.8 270.7 L80.8 294.8 L92.5 314.7 L98.4 319.7 L105.8 328.2 L96.9 339.5 L98.9 346.0 L108.6 349.3 L117.7 359.8 L125.6 361.9 L130.2 371.2 L125.1 374.7 L130.4 386.6 L146.2 413.4 L158.7 421.0 L182.8 434.0 L196.6 451.9 L201.6 473.1 L215.6 497.5 L214.6 513.2 L209.3 528.4 L221.7 551.9 L217.9 559.2 L224.5 578.9 L236.7 600.0 L254.5 616.4 L275.1 626.9 L284.0 633.7 L289.4 648.1 L300.8 655.4 L305.9 669.1 L313.3 675.7 L313.5 683.3 L319.6 699.6 L325.5 706.2 L329.6 722.1 L340.0 736.4 L367.5 760.8 L369.2 773.0 L372.8 782.1 L377.1 783.1 L380.7 789.8 L387.0 795.9 L386.8 800.7 L390.3 809.8 L394.2 811.4 L400.3 810.9 L400.8 805.8 L408.4 803.4 L409.7 796.7 L412.7 798.3 L413.7 793.5 L414.5 790.6 L409.4 784.2 L411.2 783.4 L411.2 780.2 L414.0 778.6 L410.4 774.4 L413.0 766.9 L417.3 764.3 L413.7 759.2 L416.3 753.9 L423.1 752.3 L434.6 761.6 L440.9 762.9 L448.1 762.9 L450.6 760.3 L454.7 761.1 L456.2 759.5 L470.4 758.4 L475.0 760.0 L478.8 758.4 L505.5 757.9 L514.2 763.5 L558.2 768.5 L576.5 765.9 L587.9 782.9 L596.3 782.6 L610.1 773.8 L615.7 757.6 L642.9 721.3 L685.9 698.3 L761.9 690.2 L819.5 679.1 L958.2 628.3 L989.1 527.0 L968.2 491.3 L968.1 491.3 L968.0 491.1 L967.8 491.3 L964.7 495.0 L846.4 479.4 L800.5 419.0 L800.5 412.7 L799.3 411.4 L795.7 409.3 L792.1 407.6 L788.5 409.6 L787.9 408.4 L789.7 404.7 L793.5 401.2 L796.2 398.5 L797.6 396.4 L796.3 395.2 L794.8 393.3 L793.1 393.2 L791.6 393.7 L792.3 395.4 L790.1 399.3 L787.6 401.1 L777.7 401.8 L773.2 400.4 L769.9 398.1 L766.6 391.6 L764.3 387.7 L762.8 383.3 L759.7 377.3 L755.6 371.4 L753.8 367.7 L753.2 360.6 L750.3 353.6 L748.1 350.3 L745.6 348.0 L743.0 345.6 L740.1 344.6 L740.2 341.6 L739.1 339.5 L737.5 336.6 L733.3 331.1 L733.6 329.0 L733.4 325.4 L728.1 322.3 L728.7 316.5 L731.4 322.6 L733.6 323.8 L734.7 322.6 L735.9 318.8 L737.9 316.5 L738.3 312.7 L739.3 307.5 L738.2 302.7 L738.0 300.1 L737.0 297.9 L735.3 298.0 L734.1 300.6 L733.2 298.0 L731.0 299.0 L729.8 298.3 L731.3 297.7 L732.0 295.4 L731.1 293.6 L728.4 293.1 L729.1 291.8 L730.1 291.0 L732.1 291.7 L733.3 292.9 L735.0 293.3 L735.1 292.3 L733.6 289.6 L731.9 287.3 L725.7 280.6 L723.5 279.8 L719.4 279.1 L714.3 275.6 L713.5 273.5 L714.6 271.6 L714.3 269.4 L713.1 267.4 L710.6 268.9 L710.1 267.2 L709.9 264.6 L709.0 262.2 L709.4 260.2 L711.0 259.3 L713.8 258.7 L713.4 257.9 L709.3 256.2 L706.5 254.8 L702.8 254.9 L701.5 257.2 L701.0 260.1 L701.2 261.8 L703.7 264.0 L702.4 265.5 L700.7 265.6 L700.5 263.4 L699.0 262.8 L697.5 260.6 L696.3 260.0 L695.8 256.4 L696.3 254.3 L694.1 253.5 L695.8 252.2 L695.3 250.0 L693.8 247.7 L691.1 245.6 L686.6 245.5 L682.8 243.6 L683.5 240.5 L680.9 238.8 L678.9 239.1 L680.0 240.2 L680.4 242.0 L678.3 241.9 L676.8 241.2 L675.2 239.3 L674.7 237.7 L675.7 236.2 L676.3 234.0 L676.0 231.0 L673.6 229.2 L672.7 227.3 L671.0 226.6 L669.5 225.0 L671.9 222.7 L669.1 222.2 L666.3 220.4 L663.3 217.4 L664.2 215.4 L665.0 213.4 L662.8 211.2 L660.1 208.2 L658.8 205.6 L660.1 202.3 L658.3 200.5 L657.9 197.9 L656.3 197.1 L654.7 195.9 L639.0 196.1 L635.5 197.1 L629.3 196.3 L620.6 196.4 L620.8 195.5 L618.2 192.8 L617.6 191.1 L616.0 189.8 L615.6 188.1 L615.5 186.2 L615.8 184.6 L615.6 182.7 L615.2 180.6 L614.1 179.3 L613.1 177.4 L611.8 175.9 L611.0 174.1 L609.6 172.3 L567.3 167.1 L567.3 167.2 L567.5 167.1 L561.2 169.3 L482.4 162.0 L360.1 64.8 L330.7 52.3 L283.5 23.1 L227.0 12.4ZM352.3 774.8 L351.0 775.6 L353.1 778.2 L351.2 778.4 L348.9 779.0 L347.3 778.1 L346.2 776.8 L344.0 776.8 L343.9 777.9 L344.6 778.8 L346.2 781.4 L346.1 784.5 L343.2 781.5 L341.1 778.7 L339.3 779.7 L339.9 781.0 L339.3 782.8 L339.5 784.5 L338.8 785.9 L336.5 784.7 L335.8 786.1 L335.2 788.5 L332.6 789.9 L333.2 791.0 L335.8 790.4 L338.9 791.1 L340.0 789.9 L339.7 787.5 L342.5 786.7 L343.8 786.9 L344.8 788.7 L343.4 789.4 L342.8 791.3 L344.6 792.1 L347.4 791.4 L347.9 794.0 L343.9 793.0 L342.8 793.8 L344.0 796.2 L346.0 798.1 L347.9 798.5 L349.8 799.4 L353.0 800.7 L355.6 801.9 L358.0 801.5 L360.1 800.3 L361.7 800.9 L364.0 802.5 L366.1 801.6 L365.7 799.3 L366.4 796.3 L368.5 794.5 L368.1 792.8 L366.2 791.4 L364.4 793.0 L362.9 791.7 L361.8 788.9 L358.7 788.3 L357.7 786.2 L354.9 785.6 L354.9 783.7 L355.8 780.5 L356.3 778.0 L353.8 774.9 L352.3 774.8Z", "pos": {"riyadh": [572.9, 389.5], "jeddah": [226.5, 553.1], "alula": [167.8, 293.5], "abha": [379.9, 718.8], "taif": [283.1, 564.0], "ahsa": [707.7, 355.6], "madinah": [245.9, 402.0], "tabuk": [104.9, 203.5], "unaizah": [448.8, 320.1], "baha": [331.8, 627.7]}};
+const GH = true;
+const SVGI = {
+  home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  route:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7"/>',
+  heart:'<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  spark:'<path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/>',
+  back:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  fwd:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  snow:'<path d="M12 2v20M4 7l16 10M20 7L4 17"/>',
+  wave:'<path d="M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 19c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><circle cx="16" cy="7" r="3"/>',
+  mount:'<path d="M2 20l7-12 4 6 3-4 6 10z"/>',
+  castle:'<path d="M4 21V9l3 2V7l3 2V5h4v4l3-2v4l3-2v12z"/><path d="M10 21v-4h4v4"/>',
+  dune:'<path d="M2 18c4-5 8-5 12 0M10 18c3-4 7-5 12-2"/><circle cx="17" cy="7" r="3"/>',
+  users:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.3 5 2.6 5 5.8"/>',
+  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>',
+  family:'<circle cx="8" cy="7" r="2.6"/><circle cx="16" cy="7" r="2.6"/><circle cx="12" cy="14" r="2"/><path d="M3 20c0-3 2.2-5.4 5-5.4M21 20c0-3-2.2-5.4-5-5.4M9 21c0-1.7 1.3-3 3-3s3 1.3 3 3"/>',
+  wallet:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  shuffle:'<path d="M3 7h4c4 0 6 10 10 10h4M3 17h4c1.5 0 2.7-1.4 3.7-3M14 7h3h4M18 4l3 3-3 3M18 14l3 3-3 3"/>',
+  pin:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  food:'<path d="M4 3v8a3 3 0 0 0 3 3v7M7 3v8M10 3v8a3 3 0 0 1-3 3M17 21V3c-2.5 1-4 4-4 8h4"/>',
+  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.5 10.9c-.8.6-1.5 1.6-1.5 2.6v.5h-4v-.5c0-1-.7-2-1.5-2.6A6 6 0 0 1 12 3z"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0-1.2-2.9H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 2.9-1.2V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'
+};
+const ic = (n,extra='') => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${SVGI[n]}</svg>`;
+const MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const TYPES = [['بحر','wave'],['جبال','mount'],['تراث','castle'],['صحراء','dune'],['مدينة','grid']];
+
+/* ---------- data ---------- */
+const CITIES = [
+ {id:'riyadh',name:'الرياض',region:'منطقة الرياض',tags:['مدينة','تراث','صحراء'],kind:'city',pal:['#F7C77E','#F3E1C0','#D9A86A','#C08A4E','#5A4636'],months:[11,12,1,2,3],
+  about:'عاصمة المملكة وقلبها النابض؛ تجمع بين تاريخ الدولة السعودية في الدرعية وحداثة الأبراج والمواسم والفعاليات الكبرى.',
+  fact:'حي الطريف في الدرعية مسجّل في قائمة اليونسكو للتراث العالمي منذ عام ٢٠١٠.',
+  food:'الجريش والمرقوق والقرصان من الأكلات النجدية الأصيلة.',tip:'زُر حافة العالم قبل الغروب، والطريق يحتاج سيارة دفع رباعي في آخره.',
+  places:[
+   {n:'حي الطريف بالدرعية',d:'مهد الدولة السعودية الأولى، بيوت طينية وممرات تاريخية.',t:'عصر'},
+   {n:'قصر المصمك',d:'قلعة طينية تاريخية تحكي قصة توحيد المملكة.',t:'صباح'},
+   {n:'حافة العالم',d:'منحدرات جبال طويق الشاهقة بإطلالة لا تُنسى.',t:'عصر'},
+   {n:'برج المملكة وجسر السماء',d:'إطلالة بانورامية على الرياض من الأعلى.',t:'مساء'},
+   {n:'بوليفارد رياض سيتي',d:'وجهة ترفيهية بالمطاعم والعروض والفعاليات.',t:'مساء'}]},
+ {id:'jeddah',name:'جدة',region:'منطقة مكة المكرمة',tags:['بحر','تراث','مدينة'],kind:'sea',pal:['#7EC8E3','#D6F0F7','#2E8FB3','#1B6E8F','#E9DCC3'],months:[11,12,1,2],
+  about:'عروس البحر الأحمر؛ بحر وكورنيش طويل، وأحياء تاريخية ببيوتها ورواشينها الخشبية.',
+  fact:'جدة التاريخية (البلد) مسجّلة في قائمة اليونسكو للتراث العالمي منذ عام ٢٠١٤.',
+  food:'الفول والتميس في البلد، والمطبق من أشهر أكلات جدة.',tip:'امشِ في البلد عصرًا، والجو يكون ألطف والأسواق أنشط.',
+  places:[
+   {n:'جدة التاريخية (البلد)',d:'بيوت تراثية برواشين خشبية وأسواق شعبية قديمة.',t:'عصر'},
+   {n:'كورنيش جدة',d:'ممشى طويل على البحر الأحمر وجلسات بحرية.',t:'مساء'},
+   {n:'نافورة الملك فهد',d:'من أعلى النوافير في العالم، تبان من الكورنيش.',t:'مساء'},
+   {n:'بيت نصيف',d:'من أشهر البيوت التاريخية في البلد.',t:'صباح'}]},
+ {id:'alula',name:'العلا',region:'منطقة المدينة المنورة',tags:['تراث','صحراء'],kind:'rocks',pal:['#F4A56A','#FBD9B4','#C8693A','#9E4A26','#E8B37E'],months:[10,11,12,1,2,3],
+  about:'متحف مفتوح بين الجبال الصخرية؛ آثار أنباط وحضارات قديمة وتكوينات صخرية مذهلة.',
+  fact:'الحِجر في العلا أول موقع سعودي يُسجَّل في قائمة اليونسكو للتراث العالمي (٢٠٠٨).',
+  food:'تمور العلا وحمضياتها من أشهر منتجاتها الزراعية.',tip:'احجز جولات الحِجر مسبقًا، لأن الدخول بجولات منظمة.',
+  places:[
+   {n:'الحِجر (مدائن صالح)',d:'مقابر نبطية منحوتة في الصخر.',t:'صباح'},
+   {n:'جبل الفيل',d:'صخرة طبيعية على شكل فيل، أجمل وقت لها الغروب.',t:'مساء'},
+   {n:'البلدة القديمة',d:'بيوت طينية وأزقة تاريخية مضاءة ليلًا.',t:'عصر'},
+   {n:'مرايا',d:'أكبر مبنى مغطى بالمرايا في العالم وسط الصحراء.',t:'مساء'}]},
+ {id:'abha',name:'أبها',region:'منطقة عسير',tags:['جبال'],kind:'mountains',pal:['#A9C7D9','#E6EEF2','#5E8B6E','#3F6B52','#FFFFFF'],months:[6,7,8,9],
+  about:'عروس الجنوب؛ جبال خضراء وضباب وجو معتدل في الصيف، وقرى تراثية ملونة.',
+  fact:'جبال السودة من أعلى المرتفعات في المملكة، ويقارب ارتفاعها ٣٠٠٠ متر.',
+  food:'العريكة بالعسل والسمن من أشهر أكلات الجنوب.',tip:'خذ جاكيت خفيف حتى في الصيف، الجو يبرد في المرتفعات.',
+  places:[
+   {n:'السودة',d:'قمم خضراء وضباب وتلفريك بإطلالة رائعة.',t:'صباح'},
+   {n:'قرية رجال ألمع',d:'قرية تراثية بمبانٍ حجرية ملوّنة متدرجة.',t:'عصر'},
+   {n:'قرية الحبلة',d:'القرية المعلقة على حافة الجبل.',t:'صباح'},
+   {n:'حديقة أبو خيال',d:'حديقة على سفح الجبل تطل على المدينة.',t:'مساء'}]},
+ {id:'taif',name:'الطائف',region:'منطقة مكة المكرمة',tags:['جبال'],kind:'roses',pal:['#B8D3C8','#EEF5F1','#7A9E7E','#5B7F63','#E2737E'],months:[5,6,7,8,9],
+  about:'مصيف المملكة ومدينة الورد؛ مرتفعات الهدا والشفا، ومزارع الورد الطائفي.',
+  fact:'تُلقّب الطائف بمدينة الورد، ويُستخرج من وردها دهن الورد الطائفي الشهير.',
+  food:'جرّب الفواكه الموسمية من مزارع الشفا مثل الرمان والعنب.',tip:'موسم قطاف الورد في الربيع تقريبًا، وقته مثالي لزيارة المزارع.',
+  places:[
+   {n:'الهدا',d:'طريق جبلي متعرّج ومنتزهات مطلة.',t:'عصر'},
+   {n:'الشفا',d:'مرتفعات باردة ومزارع فواكه.',t:'صباح'},
+   {n:'مزارع الورد الطائفي',d:'حقول ورد ومعامل تقطير دهن الورد.',t:'صباح'},
+   {n:'سوق عكاظ',d:'موقع السوق العربي التاريخي وفعالياته الثقافية.',t:'مساء'}]},
+ {id:'ahsa',name:'الأحساء',region:'المنطقة الشرقية',tags:['تراث','صحراء'],kind:'palms',pal:['#F6D08B','#FAEBCB','#7C9A4A','#556F2E','#C9A46A'],months:[11,12,1,2,3],
+  about:'واحة النخيل الكبرى؛ مزارع وعيون ماء وجبل بكهوف باردة، وأسواق تراثية عريقة.',
+  fact:'واحة الأحساء من أكبر واحات النخيل في العالم، ومسجّلة في اليونسكو منذ عام ٢٠١٨.',
+  food:'الرز الحساوي الأحمر وتمر الخلاص من أشهر ما تُعرف به الأحساء.',tip:'كهوف جبل القارة باردة حتى في الصيف، مكان ممتاز وقت الحر.',
+  places:[
+   {n:'جبل القارة',d:'كهوف طبيعية بممرات باردة.',t:'صباح'},
+   {n:'قصر إبراهيم',d:'قصر تاريخي بطابع عسكري وقباب جميلة.',t:'صباح'},
+   {n:'سوق القيصرية',d:'من أقدم الأسواق الشعبية في المنطقة.',t:'مساء'},
+   {n:'مزارع الواحة',d:'نخيل كثيف وعيون ماء طبيعية.',t:'عصر'}]},
+ {id:'madinah',name:'المدينة المنورة',region:'منطقة المدينة المنورة',tags:['تراث','مدينة'],kind:'palms',pal:['#CFE3D4','#F2F7F3','#6F9C7B','#4E7A5C','#D8C08C'],months:[10,11,12,1,2,3],
+  about:'طيبة الطيبة؛ مدينة الرسول ﷺ، تجمع بين المكانة الدينية والمعالم التاريخية والنخيل.',
+  fact:'المدينة المنورة أول عاصمة في الإسلام.',
+  food:'تمر العجوة من أشهر تمور المدينة.',tip:'أوقات الصباح الباكر أهدأ لزيارة المعالم التاريخية.',
+  places:[
+   {n:'المسجد النبوي',d:'ثاني الحرمين الشريفين وقلب المدينة.',t:'صباح'},
+   {n:'مسجد قباء',d:'أول مسجد بُني في الإسلام.',t:'صباح'},
+   {n:'جبل أحد',d:'موقع غزوة أحد ومَعلم تاريخي بارز.',t:'عصر'},
+   {n:'محطة سكة حديد الحجاز',d:'مبنى تاريخي يحكي قصة خط الحجاز.',t:'مساء'}]},
+ {id:'tabuk',name:'تبوك',region:'منطقة تبوك',tags:['جبال','صحراء','بحر'],kind:'desert',pal:['#F2B98A','#FCE3CB','#B9774D','#8A5534','#7BB8C9'],months:[10,11,12,1,2,3,4],
+  about:'بوابة الشمال؛ أودية وجبال وشواطئ هادئة على البحر الأحمر، وطبيعة متنوعة.',
+  fact:'جبل اللوز في تبوك من الأماكن القليلة في المملكة التي قد تكتسي بالثلج شتاءً.',
+  food:'مزارع تبوك مشهورة بالورود والفواكه.',tip:'تابع حالة الطقس في الشتاء إذا تبي تشوف الثلج في جبل اللوز.',
+  places:[
+   {n:'وادي الديسة',d:'وادٍ بين جبال صخرية ومياه ونخيل.',t:'صباح'},
+   {n:'قلعة تبوك',d:'قلعة تاريخية في وسط المدينة.',t:'عصر'},
+   {n:'جبل اللوز',d:'مرتفعات باردة وقد يتساقط عليها الثلج.',t:'صباح'},
+   {n:'شواطئ حقل',d:'شواطئ هادئة على خليج العقبة.',t:'مساء'}]},
+ {id:'unaizah',name:'عنيزة',region:'منطقة القصيم',tags:['تراث','صحراء'],kind:'dunes',pal:['#F7CF8E','#FCEBCF','#E2A85F','#C1843F','#8A6A3E'],months:[11,12,1,2,3],
+  about:'باريس نجد؛ مدينة قصيمية بأسواق تراثية وبيوت طينية ونفود ذهبية.',
+  fact:'تُلقّب عنيزة بـ«باريس نجد».',
+  food:'الكليجا القصيمية مع القهوة من أشهر ما يُقدَّم للضيف.',tip:'زيارة موسم التمور فرصة لتجربة أجواء عنيزة الحقيقية.',
+  places:[
+   {n:'سوق المسوكف',d:'سوق تراثي بدكاكين طينية وأجواء شعبية.',t:'مساء'},
+   {n:'بيت البسام التراثي',d:'بيت نجدي قديم يعكس العمارة التقليدية.',t:'صباح'},
+   {n:'نفود الغضا',d:'كثبان رملية ذهبية للتخييم والجلسات.',t:'عصر'},
+   {n:'مهرجان التمور',d:'من أشهر مواسم المدينة وأسواق التمور.',t:'صباح'}]},
+ {id:'baha',name:'الباحة',region:'منطقة الباحة',tags:['جبال','تراث'],kind:'forest',pal:['#BBD6C4','#EDF5EF','#4F8A5C','#346B44','#F3F3F3'],months:[6,7,8,9],
+  about:'حديقة الحجاز؛ غابات وجبال السراة وقرى حجرية معلقة، وجو بارد صيفًا.',
+  fact:'قرية ذي عين الأثرية مبنية من الحجر فوق جبل من الرخام الأبيض.',
+  food:'العريكة والخبز الجنوبي بالسمن والعسل.',tip:'الضباب يكثر عصرًا، فخطط للإطلالات في الصباح.',
+  places:[
+   {n:'قرية ذي عين',d:'قرية حجرية أثرية فوق جبل من الرخام.',t:'صباح'},
+   {n:'غابة رغدان',d:'غابة كثيفة ومتنزهات مطلة على تهامة.',t:'عصر'},
+   {n:'جبال السراة',d:'سلسلة جبلية خضراء بإطلالات واسعة.',t:'صباح'},
+   {n:'الأسواق الشعبية',d:'منتجات محلية مثل العسل والسمن.',t:'مساء'}]}
+];
+const byId = Object.fromEntries(CITIES.map(c=>[c.id,c]));
+
+/* ---------- storage (best effort) ---------- */
+const store = {
+  get(k,d){try{const v=localStorage.getItem('wj_'+k);return v?JSON.parse(v):d}catch(_){return d}},
+  set(k,v){try{localStorage.setItem('wj_'+k,JSON.stringify(v))}catch(_){}}
+};
+let favs = store.get('favs',[]);           // ["cityId|placeName"]
+let extra = store.get('extra',{});          // {cityId:[place]}
+let plan = store.get('plan',null);          // {city,days,items:[[{n,t,d}]]}
+const placesOf = c => c.places.concat((extra[c.id]||[]).map(p=>({...p,mine:true})));
+
+/* ---------- illustrated scenes ---------- */
+function scene(c,w=400,h=220){
+  const [s1,s2,g1,g2,a] = c.pal, id='g'+c.id+w;
+  const sky = `<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s1}"/><stop offset="1" stop-color="${s2}"/></linearGradient></defs><rect width="${w}" height="${h}" fill="url(#${id})"/>`;
+  const sun = (x,y,r,col='#FFF3D6',op=.9)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}"/>`;
+  const cloud=(x,y,s=1,op=.85)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="#fff" opacity="${op}"><ellipse cx="0" cy="0" rx="34" ry="12"/><ellipse cx="-14" cy="-8" rx="16" ry="13"/><ellipse cx="12" cy="-10" rx="18" ry="15"/></g>`;
+  const palm=(x,y,s=1,col=g2)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="${col}"><path d="M-2 0 Q2 -40 6 -78 L10 -78 Q6 -40 4 0z"/><path d="M8 -80 Q-20 -92 -44 -70 Q-18 -84 8 -76z"/><path d="M8 -80 Q36 -94 58 -70 Q32 -84 8 -76z"/><path d="M8 -80 Q-6 -108 -30 -112 Q-6 -100 6 -78z"/><path d="M8 -80 Q24 -108 46 -108 Q22 -98 10 -78z"/><path d="M8 -80 Q-14 -70 -26 -46 Q-8 -66 8 -76z"/><path d="M8 -80 Q30 -70 40 -46 Q24 -66 8 -76z"/></g>`;
+  const tree=(x,y,s=1,col=g2)=>`<g transform="translate(${x} ${y}) scale(${s})" fill="${col}"><path d="M0 -60 L16 -26 H8 L22 0 H-22 L-8 -26 H-16z"/><rect x="-2.5" y="0" width="5" height="8" fill="${col}"/></g>`;
+  let b='';
+  switch(c.kind){
+    case 'city':
+      b = sun(w*.78,h*.32,34)+`<path d="M0 ${h*.78} Q${w*.3} ${h*.7} ${w*.6} ${h*.8} T${w} ${h*.74} V${h} H0z" fill="${g1}" opacity=".7"/>`;
+      { let x=w*.08; const hs=[.34,.46,.3,.52,.38,.6,.28,.42,.36];
+        hs.forEach((v,i)=>{const bw=w*.075, bh=h*v; b+=`<rect x="${x}" y="${h*.86-bh}" width="${bw}" height="${bh}" rx="3" fill="${g2}" opacity="${.75+i%3*.08}"/>`; x+=bw+w*.012; }); }
+      b += `<path d="M${w*.47} ${h*.86} L${w*.49} ${h*.16} Q${w*.52} ${h*.08} ${w*.55} ${h*.16} L${w*.57} ${h*.86}z" fill="${c.pal[4]}"/><path d="M${w*.505} ${h*.22} Q${w*.52} ${h*.15} ${w*.535} ${h*.22} V${h*.3} H${w*.505}z" fill="${s1}"/>`;
+      b += `<path d="M0 ${h*.86} Q${w*.5} ${h*.8} ${w} ${h*.88} V${h} H0z" fill="${g1}"/>`;
+      break;
+    case 'sea':
+      b = sun(w*.22,h*.3,30)+cloud(w*.7,h*.22,1)+cloud(w*.4,h*.14,.7,.7);
+      b += `<path d="M${w*.74} ${h*.62} Q${w*.745} ${h*.1} ${w*.75} ${h*.08} Q${w*.755} ${h*.1} ${w*.76} ${h*.62}z" fill="#fff" opacity=".85"/><ellipse cx="${w*.75}" cy="${h*.1}" rx="14" ry="8" fill="#fff" opacity=".7"/>`;
+      b += `<rect y="${h*.58}" width="${w}" height="${h*.42}" fill="${g1}"/>`;
+      for(let i=0;i<4;i++) b+=`<path d="M0 ${h*(.64+i*.08)} q${w/16} -8 ${w/8} 0 t${w/8} 0 t${w/8} 0 t${w/8} 0 t${w/8} 0 t${w/8} 0 t${w/8} 0 t${w/8} 0" fill="none" stroke="#fff" stroke-width="2" opacity="${.5-i*.08}"/>`;
+      b += `<path d="M0 ${h*.92} Q${w*.3} ${h*.84} ${w*.55} ${h*.9} T${w} ${h*.86} V${h} H0z" fill="${c.pal[4]}"/>`;
+      break;
+    case 'rocks':
+      b = sun(w*.25,h*.42,40,'#FFE2B8',.95);
+      b += `<path d="M0 ${h*.8} L${w*.12} ${h*.48} Q${w*.18} ${h*.38} ${w*.26} ${h*.5} L${w*.34} ${h*.8}z" fill="${g1}" opacity=".7"/>`;
+      b += `<path d="M${w*.48} ${h*.86} V${h*.42} Q${w*.5} ${h*.26} ${w*.62} ${h*.28} Q${w*.76} ${h*.26} ${w*.78} ${h*.42} V${h*.86} H${w*.7} V${h*.62} Q${w*.66} ${h*.56} ${w*.62} ${h*.6} Q${w*.58} ${h*.64} ${w*.56} ${h*.86}z" fill="${g2}"/>`;
+      b += `<path d="M${w*.78} ${h*.86} L${w*.84} ${h*.5} Q${w*.9} ${h*.42} ${w*.96} ${h*.56} L${w} ${h*.86}z" fill="${g1}"/>`;
+      b += `<path d="M0 ${h*.84} Q${w*.5} ${h*.78} ${w} ${h*.86} V${h} H0z" fill="${c.pal[4]}"/>`;
+      break;
+    case 'mountains': case 'roses': case 'forest':
+      b = sun(w*.8,h*.24,26)+cloud(w*.3,h*.2,1)+cloud(w*.62,h*.34,.8,.7);
+      b += `<path d="M0 ${h*.7} L${w*.18} ${h*.38} L${w*.32} ${h*.56} L${w*.5} ${h*.3} L${w*.68} ${h*.54} L${w*.84} ${h*.36} L${w} ${h*.6} V${h} H0z" fill="${g1}" opacity=".75"/>`;
+      b += `<path d="M0 ${h*.82} L${w*.22} ${h*.56} L${w*.4} ${h*.74} L${w*.62} ${h*.5} L${w*.82} ${h*.72} L${w} ${h*.62} V${h} H0z" fill="${g2}"/>`;
+      if(c.kind!=='roses') b += `<path d="M0 ${h*.66} Q${w*.25} ${h*.6} ${w*.5} ${h*.68} T${w} ${h*.64} V${h*.74} Q${w*.6} ${h*.78} 0 ${h*.74}z" fill="#fff" opacity=".45"/>`;
+      if(c.kind==='forest') for(let i=0;i<9;i++) b+=tree(w*(.06+i*.11),h*(.92+(i%2)*.04),.7+(i%3)*.12,'#2C5A39');
+      if(c.kind==='roses'){ b+=`<path d="M0 ${h*.86} Q${w*.5} ${h*.8} ${w} ${h*.88} V${h} H0z" fill="#6E9470"/>`; for(let i=0;i<26;i++) b+=`<circle cx="${(i*37)%w+10}" cy="${h*(.88+((i*13)%10)/100)}" r="${4+i%3}" fill="${c.pal[4]}" opacity="${.7+(i%3)*.1}"/>`; }
+      break;
+    case 'palms':
+      b = sun(w*.7,h*.3,34)+cloud(w*.25,h*.22,.9,.7);
+      b += `<path d="M0 ${h*.78} Q${w*.5} ${h*.7} ${w} ${h*.8} V${h} H0z" fill="${c.pal[4]}" opacity=".55"/>`;
+      [[.12,.9,1.05],[.28,.94,.85],[.46,.9,1.15],[.66,.93,.9],[.84,.9,1.1]].forEach(([x,y,s])=>b+=palm(w*x,h*y,s*h/220));
+      b += `<path d="M0 ${h*.9} Q${w*.5} ${h*.84} ${w} ${h*.92} V${h} H0z" fill="${g1}"/>`;
+      break;
+    case 'desert':
+      b = sun(w*.3,h*.32,30);
+      b += `<path d="M0 ${h*.7} L${w*.14} ${h*.42} L${w*.24} ${h*.56} L${w*.36} ${h*.36} L${w*.5} ${h*.6} V${h} H0z" fill="${g2}" opacity=".85"/>`;
+      b += `<rect x="${w*.5}" y="${h*.64}" width="${w*.5}" height="${h*.2}" fill="${c.pal[4]}"/>`;
+      b += `<path d="M${w*.5} ${h*.66} q${w/24} -5 ${w/12} 0 t${w/12} 0 t${w/12} 0 t${w/12} 0 t${w/12} 0 t${w/12} 0" fill="none" stroke="#fff" stroke-width="2" opacity=".5"/>`;
+      b += `<path d="M0 ${h*.82} Q${w*.35} ${h*.72} ${w*.7} ${h*.84} T${w} ${h*.82} V${h} H0z" fill="${g1}"/>`;
+      break;
+    case 'dunes':
+      b = sun(w*.75,h*.3,36,'#FFF7E6');
+      b += `<path d="M0 ${h*.66} Q${w*.2} ${h*.5} ${w*.45} ${h*.64} T${w} ${h*.58} V${h} H0z" fill="${g1}" opacity=".7"/>`;
+      b += `<path d="M0 ${h*.8} Q${w*.3} ${h*.62} ${w*.6} ${h*.78} T${w} ${h*.74} V${h} H0z" fill="${g2}" opacity=".9"/>`;
+      b += palm(w*.16,h*.82,.7*h/220,'#7A5A33')+palm(w*.24,h*.84,.55*h/220,'#7A5A33');
+      b += `<path d="M0 ${h*.92} Q${w*.5} ${h*.84} ${w} ${h*.94} V${h} H0z" fill="${g1}"/>`;
+      break;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="رسم توضيحي لمدينة ${c.name}">${sky}${b}</svg>`;
+}
+
+/* ---------- hero: zoom into the eye, cities inside the iris ---------- */
+const EYE={x:236,y:124,r:10.5,S:11};
+const EYE_CITIES=['alula','abha','jeddah','riyadh','ahsa','taif','tabuk','baha','madinah','unaizah'];
+function eyeSVG(){
+  const {x,y,r}=EYE;
+  const scenes=EYE_CITIES.map((id,i)=>`<g class="irisScene" data-i="${i}" opacity="${i?0:1}">${scene(byId[id],300,300).replace('<svg ',`<svg x="${x-r}" y="${y-r}" width="${2*r}" height="${2*r}" `)}</g>`).join('');
+  return `<svg id="eyeSvg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="عين تنظر وفيها مشاهد من المدن السعودية">
+  <defs>
+    <radialGradient id="eBg" cx="30%" cy="35%" r="85%"><stop offset="0" stop-color="#F7DDB0"/><stop offset=".45" stop-color="#E9A97C"/><stop offset="1" stop-color="#2C6E5E"/></radialGradient>
+    <linearGradient id="eSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0C7A3"/><stop offset="1" stop-color="#C98D66"/></linearGradient>
+    <linearGradient id="eWrap" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1E4B44"/><stop offset="1" stop-color="#0D2D28"/></linearGradient>
+    <radialGradient id="eIrisV" cx="50%" cy="50%" r="50%"><stop offset=".62" stop-color="#0B2A24" stop-opacity="0"/><stop offset="1" stop-color="#0B2A24" stop-opacity=".75"/></radialGradient>
+    <clipPath id="eIris"><circle cx="${x}" cy="${y}" r="${r}"/></clipPath>
+    <clipPath id="eAlmond"><path d="M208 124 Q236 102 264 124 Q236 142 208 124Z"/></clipPath>
+  </defs>
+  <rect width="400" height="300" fill="url(#eBg)"/>
+  <g opacity=".5" fill="#fff"><circle cx="70" cy="70" r="26" opacity=".6"/><ellipse cx="110" cy="210" rx="70" ry="18" opacity=".25"/></g>
+  <g id="eyeZoom">
+    <path d="M238 300 C232 268 222 246 212 232 C202 222 196 214 199 204 C202 198 196 194 194 188 C192 182 198 180 196 174 C194 168 186 164 178 158 C172 153 176 148 184 140 C192 132 200 124 204 112 C210 92 208 70 220 52 C240 22 300 14 340 30 C380 46 400 90 402 140 L402 300Z" fill="url(#eSkin)"/>
+    <path d="M226 46 C246 10 330 0 372 34 C412 66 420 140 410 300 L300 300 C318 250 326 200 314 150 C306 112 290 92 268 84 C248 78 232 72 226 46Z" fill="url(#eWrap)"/>
+    <path d="M206 96 C214 70 226 50 252 40" fill="none" stroke="#0D2D28" stroke-width="14" stroke-linecap="round"/>
+    <path d="M212 108 Q234 96 258 104" fill="none" stroke="#3A2618" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M208 124 Q236 102 264 124 Q236 142 208 124Z" fill="#FBF6F0"/>
+    <g clip-path="url(#eAlmond)">
+      <g clip-path="url(#eIris)">${scenes}<circle cx="${x}" cy="${y}" r="${r}" fill="url(#eIrisV)"/></g>
+      <circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#123A33" stroke-width=".7" opacity=".8"/>
+      <ellipse cx="${x-4}" cy="${y-5}" rx="2.4" ry="1.6" fill="#fff" opacity=".85"/>
+      <rect id="eLid" x="204" y="100" width="64" height="44" fill="url(#eSkin)" transform="translate(0 100) scale(1 0) translate(0 -100)"/>
+    </g>
+    <path d="M207 124 Q236 101 265 124" fill="none" stroke="#2A1A12" stroke-width="2.2" stroke-linecap="round"/>
+    <g stroke="#2A1A12" stroke-width="1.1" stroke-linecap="round">${[[212,120,206,115],[218,115,213,109],[225,111,222,104],[233,109,232,102],[241,110,242,103],[249,113,252,106],[256,117,261,111]].map(a=>`<line x1="${a[0]}" y1="${a[1]}" x2="${a[2]}" y2="${a[3]}"/>`).join('')}</g>
+    <path d="M211 128 Q236 141 261 128" fill="none" stroke="#B57A57" stroke-width=".8" opacity=".6"/>
+  </g>
+</svg>`;
+}
+function startEye(){
+  const svg=document.getElementById('eyeSvg'); if(!svg) return;
+  const zoom=svg.querySelector('#eyeZoom'), lid=svg.querySelector('#eLid'), cap=document.getElementById('eyeCap');
+  const scenes=[...svg.querySelectorAll('.irisScene')];
+  const calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const {x,y}=EYE; let S=EYE.S, tx=200, ty=150, s0=1;
+  const frameFit=()=>{ const b=svg.getBoundingClientRect(); const ar=b.width/Math.max(1,b.height);
+    let vw=400,vh=300; if(ar>4/3) vh=400/ar; else vw=300*ar;
+    if(ar>=1){ S=Math.min(vh*.86,vw*.5)/(2*EYE.r); tx=200-vw*.27; ty=150; s0=Math.max(1,vh/170); }
+    else { S=(vw*.8)/(2*EYE.r); tx=200; ty=150-vh*.2; s0=1.1; } };
+  frameFit();
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  const setZ=e=>{ const s=s0+(S-s0)*e, sx=tx, sy=ty; zoom.setAttribute('transform',`translate(${(sx-s*x).toFixed(2)} ${(sy-s*y).toFixed(2)}) scale(${s.toFixed(4)})`); };
+  const setLid=k=>lid.setAttribute('transform',`translate(0 100) scale(1 ${k.toFixed(3)}) translate(0 -100)`);
+  let idx=0;
+  const show=i=>{ scenes.forEach((g,j)=>g.setAttribute('opacity',j===i?'1':'0')); const c=byId[EYE_CITIES[i]]; cap.href='#'+c.id; cap.innerHTML=`${c.name}<small>${c.region}</small>`; };
+  show(0);
+  const t0=performance.now(), HOLD=900, ZOOM=3200;
+  let lastSwitch=0, nextBlink=HOLD+ZOOM+2600, zoomed=false;
+  if(calm){ setZ(1); cap.classList.add('on'); }
+  function frame(now){
+    if(!svg.isConnected) return;
+    const t=now-t0;
+    if(!calm && !zoomed){
+      const p=Math.min(1,Math.max(0,(t-HOLD)/ZOOM)); setZ(ease(p));
+      if(p>=1){ zoomed=true; lastSwitch=t; cap.classList.add('on'); }
+    }
+    const every=calm?4000:2600;
+    if((zoomed||calm) && t-lastSwitch>every){ lastSwitch=t; idx=(idx+1)%scenes.length;
+      if(!calm){ nextBlink=t; } show(idx); }
+    if(!calm && zoomed && t>=nextBlink){ const b=(t-nextBlink)/220; if(b>=1){ setLid(0); nextBlink=t+99999; } else setLid(Math.sin(b*Math.PI)); }
+    requestAnimationFrame(frame);
+  }
+  setZ(calm?1:0); requestAnimationFrame(frame);
+  addEventListener('resize',()=>{ if(!svg.isConnected) return; frameFit(); if(zoomed||calm) setZ(1); });
+}
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const nowM = new Date().getMonth()+1;
+const goodNow = c => c.months.includes(nowM);
+const monthsTxt = c => { const m=c.months; return MONTHS[m[0]-1]+' – '+MONTHS[m[m.length-1]-1]; };
+function toast(t){ const el=document.createElement('div'); el.className='toast'; el.textContent=t; document.body.append(el); setTimeout(()=>el.remove(),1800); }
+const isFav = (cid,n) => favs.includes(cid+'|'+n);
+function toggleFav(cid,n,btn){
+  const k=cid+'|'+n; const i=favs.indexOf(k);
+  if(i>=0){favs.splice(i,1);toast('انحذف من المفضلة');} else {favs.push(k);toast('انضاف للمفضلة ♥');}
+  store.set('favs',favs); if(btn) btn.setAttribute('aria-pressed',String(i<0)); drawNav();
+}
+
+/* ---------- nav ---------- */
+const NAV=[['home','الرئيسية','home'],['cities','المدن','grid'],['plan','رحلتي','route'],['fav','المفضلة','heart']];
+function current(){ const h=location.hash.slice(1); return h||'home'; }
+function drawNav(){
+  const r=current(), sec = byId[r]?'cities':r;
+  const n = favs.length?`<span class="badge">${favs.length}</span>`:'';
+  $('#nav').innerHTML = NAV.map(([k,t,i])=>`<a href="#${k}" ${sec===k?'aria-current="page"':''}>${ic(i)}${t}${k==='fav'?n:''}</a>`).join('')+`<a href="#admin" ${sec==='admin'?'aria-current="page"':''}>${ic('gear')}الإدارة</a>`;
+  $('#tabs').innerHTML = NAV.map(([k,t,i])=>`<a href="#${k}" ${sec===k?'aria-current="page"':''}>${ic(i)}${t}${k==='fav'?n:''}</a>`).join('');
+}
+
+/* ---------- screens ---------- */
+let selCity='riyadh', selMonth=nowM;
+function cityCard(c){
+  return `<a class="card ccard" href="#${c.id}"><div class="art">${scene(c)}<span class="reg">${c.region}</span></div>
+  <div class="body"><h3>${c.name}</h3><p>${c.about}</p>
+  <div class="row">${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+  <div class="meta"><span>${ic('cal')} أفضل وقت: ${monthsTxt(c)}</span>${rateChip(c.id)||(goodNow(c)?'<span class="tag s">مناسبة الحين</span>':'')}</div></div></a>`;
+}
+function home(){
+  const c=byId[selCity];
+  const pins = CITIES.map(x=>{const [px,py]=MAP.pos[x.id]; const left=['jeddah','madinah','tabuk','alula','baha'].includes(x.id);
+    return `<g class="pin ${x.id===selCity?'on':''}" data-c="${x.id}" tabindex="0" role="button" aria-label="${x.name}"><circle class="halo" cx="${px}" cy="${py}" r="26"/><circle class="dot" cx="${px}" cy="${py}" r="11"/><text x="${left?px-20:px+20}" y="${py+8}" text-anchor="${left?'end':'start'}">${x.name}</text></g>`;}).join('');
+  return `<div class="screen">
+  <section class="hero">
+    <div class="hero-art" id="eyeArt">${eyeSVG()}<a class="cap" id="eyeCap" href="#alula"></a></div>
+    <div class="hero-txt">
+      <h1>اكتشف السعودية<br><span>مدينة مدينة</span></h1>
+      <p>خريطة تفاعلية، ومعالم كل مدينة وأفضل وقت لزيارتها، ومخطط رحلة يرتب لك أيامك.</p>
+      <div class="search" id="hs">${ic('search')}<input id="hq" type="search" placeholder="ابحث عن مدينة أو مَعلم…" autocomplete="off" aria-label="بحث"><div class="sugg" id="hsugg" hidden></div></div>
+      <div class="hero-btns"><button class="btn pri" data-quiz>${ic('spark')} وش يناسبني؟</button><a class="btn ghost" href="#plan">${ic('route')} خطط رحلتك</a></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><div><h2>خريطة المدن</h2><p>${GL?'خريطة حقيقية 3D · اضغط على مدينة تطير لها، أو ابحث عن أي مكان':'اضغط على أي مدينة في الخريطة'}</p></div><a class="link" href="#cities">كل المدن ${ic('fwd')}</a></div>
+    <div class="mapwrap" style="margin-top:12px">
+      ${GL?`<div class="card gmapc" id="gmapc"><div id="gmap"></div>
+        <div class="msearch" id="ms"><div class="in">${ic('search')}<input id="mq" type="search" placeholder="ابحث عن أي مكان بالسعودية…" autocomplete="off" aria-label="بحث في الخريطة"></div><div class="msugg" id="msugg" hidden></div></div>
+        <button type="button" class="mreset" id="mreset">${ic('pin')} كل المملكة</button></div>`:`<div class="card map"><span class="maphint">${ic('pin')} ${CITIES.length} مدن</span>
+        <svg viewBox="-20 -10 ${MAP.W+40} ${MAP.H+20}" aria-label="خريطة المملكة العربية السعودية"><path class="land" d="${MAP.path}"/><text class="sea-lbl" x="60" y="470" text-anchor="middle" transform="rotate(52 60 470)">البحر الأحمر</text><text class="sea-lbl" x="800" y="215" text-anchor="middle">الخليج العربي</text>${pins}</svg>
+      </div>`}
+      <div class="card preview" id="pv">${previewHTML(c)}</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><div><h2>أفضل وقت للزيارة</h2><p>اختر الشهر وتطلع لك المدن الي جوها حلو فيه</p></div></div>
+    <div class="months" style="margin-top:12px" id="months">${MONTHS.map((m,i)=>`<button class="month" data-m="${i+1}" aria-pressed="${i+1===selMonth}">${m}</button>`).join('')}</div>
+    <div class="month-res" id="mres">${monthRes()}</div>
+  </section>
+
+  <section>
+    <div class="sec-h"><div><h2>مدن مختارة</h2><p>بداية حلوة لرحلتك الجاية</p></div><a class="link" href="#cities">عرض الكل ${ic('fwd')}</a></div>
+    <div class="grid" style="margin-top:12px">${['alula','abha','jeddah','ahsa'].map(i=>cityCard(byId[i])).join('')}</div>
+  </section></div>`;
+}
+function previewHTML(c){
+  return `<div class="art">${scene(c,400,225)}</div><div class="body">
+  <div class="row"><h3>${c.name}</h3><span class="tag s">${c.region}</span>${rateChip(c.id)}</div>
+  <p>${c.about}</p>
+  <a class="link" href="#${c.id}" style="font-size:13.5px">${ic('users')} تجارب الزوار</a>
+  <ul class="mini-places">${c.places.slice(0,3).map(p=>`<li>${p.n}</li>`).join('')}</ul>
+  <div class="row" style="margin-top:auto"><a class="btn pri" href="#${c.id}">تفاصيل المدينة</a><button class="btn sec" data-plan="${c.id}">${ic('route')} خطط رحلة</button></div></div>`;
+}
+function monthRes(){
+  const l=CITIES.filter(c=>c.months.includes(selMonth));
+  return l.length? l.map(c=>`<a class="mres" href="#${c.id}"><i>${scene(c,60,60)}</i>${c.name}</a>`).join('') : `<span class="note">ما فيه مدن مقترحة لهذا الشهر.</span>`;
+}
+
+let fType='الكل', fQ='';
+function cities(){
+  return `<div class="screen">
+  <div class="sec-h"><div><h2 style="font-size:28px">كل المدن</h2><p>صفّ المدن حسب طبيعتها أو ابحث بالاسم</p></div></div>
+  <div class="listbar"><div class="search">${ic('search')}<input id="lq" type="search" placeholder="ابحث باسم المدينة أو المنطقة" value="${esc(fQ)}" aria-label="بحث في المدن"></div></div>
+  <div class="chips" id="types">${['الكل',...TYPES.map(t=>t[0])].map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===fType}">${t}</button>`).join('')}</div>
+  <div id="clist">${cityList()}</div></div>`;
+}
+function cityList(){
+  const q=fQ.trim();
+  const l=CITIES.filter(c=>(fType==='الكل'||c.tags.includes(fType))&&(!q||c.name.includes(q)||c.region.includes(q)||c.places.some(p=>p.n.includes(q))));
+  return l.length?`<div class="grid">${l.map(cityCard).join('')}</div>`:`<div class="empty"><b>ما لقينا مدينة بهذا الاسم</b>جرّب كلمة ثانية أو اختر «الكل».</div>`;
+}
+
+function details(c){
+  const ps=placesOf(c);
+  return `<div class="screen">
+  <a class="link back" href="#cities">${ic('back')} كل المدن</a>
+  <section class="banner">${scene(c,1050,400)}<div class="over"><div class="row">${c.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><h1>${c.name}</h1><span>${ic('pin')} ${c.region}</span></div></section>
+  <div class="dgrid"><div class="col">
+    <section class="card pad"><h2>عن المدينة</h2><p>${c.about}</p></section>
+    ${GL?`<section class="card dmapc" id="dmapc"><div id="dmap" data-city="${c.id}"></div><span class="dmap-h">${ic('pin')} ${c.name} على الخريطة</span></section>`:''}
+    <section><div class="sec-h"><h2>المعالم والأماكن</h2><p>${ps.length} أماكن · احفظ الي يعجبك ♥</p></div>
+      <div class="places" style="margin-top:12px">${ps.map((p,i)=>`<article class="card place">${p.mine?'<span class="mine">مضاف من الإدارة</span>':''}<h3>${esc(p.n)}</h3><p>${esc(p.d)}</p><div class="when"><span class="tag s">${ic(p.t==='مساء'?'spark':'sun')} ${p.t}</span>${GL?`<button type="button" class="gl" data-geo="${c.id}|${i}">${ic('pin')} على الخريطة</button>`:''}<a class="gl" target="_blank" rel="noopener" href="${gmq(p.n,c.name)}">${ic('route')} قوقل ماب</a></div>
+      <button class="heart" data-fav="${c.id}|${esc(p.n)}" aria-pressed="${isFav(c.id,p.n)}" aria-label="أضف للمفضلة">${ic('heart')}</button></article>`).join('')}</div></section>
+    <section class="comm" id="comm" data-city="${c.id}"><div class="sec-h"><div><h2>تجارب الزوار</h2><p>انطباعات وصور وملاحظات من زاروا ${c.name}</p></div></div><div id="commBody">${commHTML(c)}</div></section>
+  </div><div class="col">
+    <section class="card pad"><h2>${ic('cal')} أفضل وقت للزيارة</h2><p>${monthsTxt(c)}</p>
+      <div class="yearbar">${MONTHS.map((m,i)=>`<span class="${c.months.includes(i+1)?'good':''} ${i+1===nowM?'now':''}" title="${m}">${m.slice(0,3)}</span>`).join('')}</div>
+      <div class="legend"><span><i></i>وقت مناسب</span><span><i style="background:none;outline:2px solid var(--sand)"></i>الشهر الحالي</span></div></section>
+    <section class="card pad fact"><h2>${ic('bulb')} تعرف؟</h2><p>${c.fact}</p></section>
+    <section class="card pad"><h2>${ic('food')} جرّب</h2><p>${c.food}</p></section>
+    <section class="card pad"><h2>${ic('spark')} نصيحة</h2><p>${c.tip}</p></section>
+    <div class="side-cta"><button class="btn pri" data-plan="${c.id}">${ic('route')} خطط رحلتك إلى ${c.name}</button><button class="btn ghost" data-quiz>${ic('spark')} وش يناسبني؟</button></div>
+  </div></div></div>`;
+}
+
+/* planner */
+function buildPlan(cid,days){
+  const c=byId[cid]; const ps=placesOf(c);
+  const pool={صباح:ps.filter(p=>p.t==='صباح'),عصر:ps.filter(p=>p.t==='عصر'),مساء:ps.filter(p=>p.t==='مساء')};
+  const all=ps.slice(); let k=0; const used=new Set(); const out=[];
+  for(let d=0; d<days; d++){
+    const day=[];
+    for(const t of ['صباح','عصر','مساء']){
+      let p=pool[t].find(x=>!used.has(x.n)) || all.find(x=>!used.has(x.n));
+      if(!p){ p={n:'وقت حر واستكشاف',d:'تجول في المدينة على راحتك.',t}; } else used.add(p.n);
+      day.push({n:p.n,d:p.d,t});
+    }
+    if(d===0) day.splice(2,0,{n:'تجربة أكل شعبي',d:c.food,t:'غداء'});
+    out.push(day);
+  }
+  return {city:cid,days,items:out};
+}
+function planScreen(){
+  const cid = plan?plan.city:selCity; const days = plan?plan.days:2;
+  return `<div class="screen">
+  <div class="sec-h"><div><h2 style="font-size:28px">مخطط الرحلة</h2><p>اختر المدينة وعدد الأيام، ونرتب لك جدول يوم بيوم</p></div></div>
+  <div class="planner">
+    <form class="card form" id="pform">
+      <div class="field"><label for="pcity">المدينة</label><select id="pcity">${CITIES.map(c=>`<option value="${c.id}" ${c.id===cid?'selected':''}>${c.name}</option>`).join('')}</select></div>
+      <div class="field"><label>عدد الأيام</label><div class="days" id="pdays">${[1,2,3,4,5].map(n=>`<button type="button" data-d="${n}" aria-pressed="${n===days}">${n}</button>`).join('')}</div></div>
+      <button class="btn pri" type="submit">${ic('route')} رتّب رحلتي</button>
+      ${plan?`<button class="btn ghost" type="button" id="pclear">${ic('x')} مسح الخطة</button>`:''}
+      <p class="note">تقدر تحذف أي نشاط من الجدول، والخطة تنحفظ في جهازك.</p>
+    </form>
+    <div class="plan-list" id="plist">${planList()}</div>
+  </div></div>`;
+}
+function planList(){
+  if(!plan) return `<div class="empty"><b>ما سويت خطة للحين</b>اختر المدينة وعدد الأيام واضغط «رتّب رحلتي».</div>`;
+  const c=byId[plan.city];
+  return `<div class="card" style="overflow:hidden"><div style="aspect-ratio:21/6;max-width:100%">${scene(c,700,200)}</div><div class="pad row" style="justify-content:space-between"><div><h2 style="margin:0">رحلتك إلى ${c.name}</h2><span class="note">${plan.days} ${plan.days>2?'أيام':plan.days===2?'يومين':'يوم'} · ${c.region}</span></div><a class="link" href="#${c.id}">عن المدينة ${ic('fwd')}</a></div></div>`+
+    plan.items.map((day,di)=>`<section class="card day"><div class="day-h"><b>${di+1}</b><h3>اليوم ${['الأول','الثاني','الثالث','الرابع','الخامس'][di]}</h3></div>
+    ${day.length?day.map((s,si)=>`<div class="slot"><span class="t">${s.t}</span><div class="n">${esc(s.n)}<small>${esc(s.d)}</small></div><button class="x" data-rm="${di}-${si}" aria-label="حذف">${ic('x')}</button></div>`).join(''):'<p class="note">يوم حر بدون أنشطة.</p>'}</section>`).join('');
+}
+
+function favScreen(){
+  const l=favs.map(k=>{const [cid,n]=k.split('|'); const c=byId[cid]; if(!c) return ''; const p=placesOf(c).find(x=>x.n===n)||{d:''};
+    return `<div class="card fav"><i>${scene(c,60,60)}</i><div><b>${esc(n)}</b><small>${c.name} · ${esc(p.d)}</small></div><button class="heart" style="position:static" data-fav="${esc(k)}" aria-pressed="true" aria-label="حذف من المفضلة">${ic('heart')}</button></div>`;}).join('');
+  return `<div class="screen"><div class="sec-h"><div><h2 style="font-size:28px">المفضلة</h2><p>الأماكن الي حفظتها من صفحات المدن</p></div></div>
+  ${favs.length?`<div class="favs">${l}</div>`:`<div class="empty"><b>المفضلة فاضية</b>افتح أي مدينة واضغط ♥ على المكان الي يعجبك.<br><br><a class="btn pri" href="#cities">تصفح المدن</a></div>`}</div>`;
+}
+
+function adminScreen(){
+  const rows=Object.entries(extra).flatMap(([cid,arr])=>arr.map((p,i)=>`<div class="card fav"><i>${scene(byId[cid],60,60)}</i><div><b>${esc(p.n)}</b><small>${byId[cid].name} · ${p.t}</small></div><button class="x" data-del="${cid}-${i}" aria-label="حذف">${ic('x')}</button></div>`)).join('');
+  return `<div class="screen"><div class="sec-h"><div><h2 style="font-size:28px">لوحة الإدارة</h2><p>إضافة معالم جديدة للمدن وحذفها</p></div></div>
+  <div class="admin"><form class="card form" id="aform">
+    <div class="field"><label for="acity">المدينة</label><select id="acity">${CITIES.map(c=>`<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
+    <div class="field"><label for="aname">اسم المكان</label><input id="aname" required maxlength="40" placeholder="مثال: متحف المدينة"></div>
+    <div class="field"><label for="adesc">وصف قصير</label><input id="adesc" required maxlength="90" placeholder="جملة تعرّف بالمكان"></div>
+    <div class="field"><label for="atime">أفضل وقت في اليوم</label><select id="atime"><option>صباح</option><option>عصر</option><option>مساء</option></select></div>
+    <button class="btn pri" type="submit">${ic('plus')} إضافة المكان</button>
+    <p class="note">الإضافات تنحفظ في هذا الجهاز وتظهر مباشرة في صفحة المدينة ومخطط الرحلة.</p>
+  </form>
+  <div class="favs">${rows||'<div class="empty"><b>ما فيه إضافات</b>الأماكن الي تضيفها تطلع هنا.</div>'}</div></div></div>`;
+}
+
+/* ---------- quiz ---------- */
+const QZ=[
+  {q:'وش تحب أكثر في الرحلات؟',k:'tag',o:[['البحر','بحر','wave'],['الجبال والضباب','جبال','mount'],['التراث والتاريخ','تراث','castle'],['الصحراء والبر','صحراء','dune']]},
+  {q:'متى ناوي تسافر؟',k:'season',o:[['الشتاء','w','snow'],['الصيف','s','sun'],['الربيع','sp','spark'],['الحين','now','cal']]},
+  {q:'مع مين بتسافر؟',k:'who',o:[['العائلة','fam','family'],['الأصدقاء','fr','users'],['لحالي','me','user'],['أي أحد','any','spark']]}
+];
+function quiz(){
+  const ans={}; let step=0;
+  const L=$('#layer');
+  const close=()=>{L.innerHTML='';document.removeEventListener('keydown',onKey)};
+  const onKey=e=>{if(e.key==='Escape')close()};
+  document.addEventListener('keydown',onKey);
+  function draw(){
+    let inner;
+    if(step<QZ.length){
+      const s=QZ[step];
+      inner=`<div class="steps">${QZ.map((_,i)=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div><h2>${s.q}</h2><div class="opts">${s.o.map(o=>`<button class="opt" data-v="${o[1]}">${ic(o[2])}${o[0]}</button>`).join('')}</div>`;
+    } else {
+      const months={w:[12,1,2],s:[6,7,8],sp:[3,4,5],now:[nowM]}[ans.season];
+      const sc=CITIES.map(c=>({c,s:(c.tags.includes(ans.tag)?3:0)+(c.months.some(m=>months.includes(m))?2:0)+(ans.who==='fam'&&c.tags.includes('مدينة')?.5:0)})).sort((a,b)=>b.s-a.s);
+      const best=sc[0].c, alt=sc.slice(1,3).map(x=>x.c);
+      inner=`<div class="result"><span class="tag s" style="align-self:flex-start">نقترح لك</span><div class="art">${scene(best,500,250)}</div><h2 style="font-size:28px">${best.name}</h2><p style="margin:0;color:var(--muted)">${best.about}</p><p class="note">أفضل وقت: ${monthsTxt(best)}</p>
+      <div class="row"><a class="btn pri" href="#${best.id}" data-close>شوف التفاصيل</a><button class="btn sec" data-plan="${best.id}" data-close>${ic('route')} خطط رحلة</button></div>
+      <p class="note">خيارات ثانية: ${alt.map(c=>`<a class="link" href="#${c.id}" data-close>${c.name}</a>`).join(' · ')}</p></div>`;
+    }
+    L.innerHTML=`<div class="modal" data-bg><div class="dialog" role="dialog" aria-modal="true" aria-label="وش يناسبني"><div class="row" style="justify-content:space-between"><strong>${ic('spark')} وش يناسبني؟</strong><button class="x" data-close aria-label="إغلاق">${ic('x')}</button></div>${inner}</div></div>`;
+    const first=L.querySelector('.opt,.btn'); if(first) first.focus();
+  }
+  L.onclick=e=>{
+    if(e.target.matches('[data-bg]')||e.target.closest('[data-close]')){ if(!e.target.closest('[data-plan]')) {close();} else close(); return; }
+    const o=e.target.closest('.opt'); if(o){ ans[QZ[step].k]=o.dataset.v; step++; draw(); }
+  };
+  draw();
+}
+
+/* ---------- visitors: live experiences (db + assets) ---------- */
+const LIVE={db:null,user:null,assets:null,uid:null,owner:false,canWrite:null,ready:false,failed:false,timedOut:false,posts:[],names:{}};
+const MOODS=[[5,'رائعة'],[4,'حلوة'],[3,'عادية'],[2,'ما عجبتني']];
+let draft={rating:5,kind:'review',file:null,preview:null,busy:false};
+const ratingOf=cid=>{const l=LIVE.posts.filter(p=>p.city===cid&&p.rating);return l.length?{avg:l.reduce((a,p)=>a+p.rating,0)/l.length,n:l.length}:null};
+const starStr=r=>'★'.repeat(Math.round(r))+'☆'.repeat(5-Math.round(r));
+const arNum=n=>n.toLocaleString('ar-SA',{maximumFractionDigits:1});
+function rateChip(cid){const r=ratingOf(cid);return r?`<span class="rate-chip">★ ${arNum(r.avg)} <small style="color:var(--muted);font-weight:400">(${arNum(r.n)})</small></span>`:'';}
+const ago=t=>{const s=(Date.now()-t)/1000,rtf=new Intl.RelativeTimeFormat('ar',{numeric:'auto'});if(s<60)return 'الآن';if(s<3600)return rtf.format(-Math.round(s/60),'minute');if(s<86400)return rtf.format(-Math.round(s/3600),'hour');if(s<2592000)return rtf.format(-Math.round(s/86400),'day');return new Date(t).toLocaleDateString('ar-SA')};
+function commHTML(c){
+  if(!LIVE.db){
+    return LIVE.failed?`<div class="empty"><b>تجارب الزوار تظهر في رابط الموقع</b>افتح الموقع من رابطه عشان تشوف تعليقات الزوار وصورهم وتضيف تجربتك.</div>`:`<p class="state">جاري التحميل…</p>`;
+  }
+  const list=LIVE.posts.filter(p=>p.city===c.id).sort((a,b)=>b.at-a.at);
+  const r=ratingOf(c.id); const photos=list.filter(p=>p.pic);
+  const canPost=LIVE.uid&&LIVE.canWrite!==false;
+  let h=LIVE.local?`<p class="state">تجاربك تنحفظ على جهازك في هذي النسخة.</p>`:'';
+  h+=`<div class="card pad comm-sum">${r?`<span class="score">${arNum(r.avg)}</span><div><div class="stars">${starStr(r.avg)}</div><small class="state">من ${arNum(r.n)} ${r.n>10?'تجربة':'تجارب'}</small></div>`:`<div><b>ما فيه تجارب للحين</b><div class="state">كن أول من يشارك تجربته في ${c.name}.</div></div>`}</div>`;
+  if(canPost){
+    h+=`<form class="card compose" id="cform">
+      <div class="kinds"><button type="button" class="chip" data-kind="review" aria-pressed="${draft.kind==='review'}">انطباع وتعليق</button><button type="button" class="chip" data-kind="tip" aria-pressed="${draft.kind==='tip'}">ملاحظة ونصيحة</button></div>
+      ${draft.kind==='review'?`<div class="moods" role="group" aria-label="انطباعك">${MOODS.map(([v,t])=>`<button type="button" class="mood" data-rate="${v}" aria-pressed="${draft.rating===v}"><b>${'★'.repeat(v)}</b>${t}</button>`).join('')}</div>`:''}
+      <textarea id="ctext" maxlength="600" placeholder="${draft.kind==='tip'?'مثال: الزحمة أقل الصباح، وخذوا جاكيت لأن الجو يبرد…':'وش أكثر شي عجبك في '+c.name+'؟'}" aria-label="نص التجربة"></textarea>
+      <div class="photo-pick"><label class="btn ghost" for="cphoto">${ic('plus')} أضف صورة</label><input id="cphoto" type="file" accept="image/*">${draft.preview?`<img class="thumb" src="${draft.preview}" alt="الصورة المختارة"><button type="button" class="x" id="cphotoX" aria-label="إزالة الصورة">${ic('x')}</button>`:''}
+        <button class="btn pri" type="submit" style="margin-inline-start:auto" ${draft.busy?'disabled':''}>${draft.busy?'جاري النشر…':'انشر'}</button></div>
+    </form>`;
+  } else if(LIVE.ready){
+    h+=`<p class="state">تقدر تقرأ تجارب الزوار، والمشاركة متاحة لأعضاء الموقع.</p>`;
+  }
+  if(photos.length) h+=`<div><h3 style="font-size:16px;margin:4px 0 8px">صور الزوار</h3><div class="gallery">${photos.slice(0,12).map(p=>`<button type="button" data-lb="${esc(p.uid)}/${esc(p.pic)}" aria-label="عرض الصورة"><img data-pic="${esc(p.uid)}/${esc(p.pic)}" alt="صورة من زائر"></button>`).join('')}</div></div>`;
+  if(!LIVE.ready && !LIVE.timedOut) h+=`<p class="state">جاري تحميل التجارب…</p>`;
+  if(LIVE.timedOut && !LIVE.ready) h+=`<p class="state">ما قدرنا نوصل للتجارب الحين، جرّب بعد شوي.</p>`;
+  h+=list.map(p=>{const pr=LIVE.names[p.uid]||{};const mine=p.uid===LIVE.uid;
+    return `<article class="card post"><div class="post-h">${pr.avatarUrl?`<img src="${esc(pr.avatarUrl)}" alt="">`:''}<div><b>${esc(pr.name||(mine?'أنت':'زائر'))}</b><small>${ago(p.at)}</small></div>${p.kind==='tip'?'<span class="tag tip" style="margin-inline-start:auto">ملاحظة</span>':p.rating?`<span class="stars">${'★'.repeat(p.rating)}</span>`:''}</div>
+    ${p.text?`<p>${esc(p.text)}</p>`:''}${p.pic?`<img class="pimg" data-pic="${esc(p.uid)}/${esc(p.pic)}" data-lb="${esc(p.uid)}/${esc(p.pic)}" alt="صورة من زائر">`:''}
+    ${(mine||LIVE.owner)?`<button class="del" data-delpost="${esc(p.uid)}|${esc(p.id)}">${mine?'حذف تجربتي':'حذف (إدارة)'}</button>`:''}</article>`}).join('');
+  return h;
+}
+function refreshComm(){
+  const box=$('#commBody'); if(box){ const c=byId[$('#comm').dataset.city]; const t=$('#ctext'); const keep=t?t.value:''; box.innerHTML=commHTML(c); const t2=$('#ctext'); if(t2&&keep) t2.value=keep; }
+  loadPics();
+  document.querySelectorAll('.ccard').forEach(a=>{const id=a.getAttribute('href').slice(1);const m=a.querySelector('.meta');if(m&&byId[id]){const rc=rateChip(id);const sp=m.children[1];if(rc){if(sp)sp.outerHTML=rc;else m.insertAdjacentHTML('beforeend',rc);}}});
+}
+const PICS={};
+function loadPics(){
+  if(!LIVE.db) return;
+  document.querySelectorAll('img[data-pic]:not([src])').forEach(img=>{
+    const k=img.dataset.pic;
+    const apply=v=>{ if(v) img.src=v; else img.outerHTML='<div class="imgfail">الصورة غير متاحة</div>'; };
+    if(k in PICS){ Promise.resolve(PICS[k]).then(apply); return; }
+    const [u,id]=k.split('/');
+    PICS[k]=LIVE.db.doc('posts/'+u+'/pics/'+id).get().then(d=>{const v=d.exists&&d.data().d; PICS[k]=v||null; return PICS[k];}).catch(()=>{delete PICS[k]; return null;});
+    PICS[k].then(apply);
+  });
+}
+async function resolveNames(){
+  if(!LIVE.user) return; const ids=[...new Set(LIVE.posts.map(p=>p.uid))].filter(i=>!LIVE.names[i]);
+  if(!ids.length) return; try{ const ps=await LIVE.user.profiles(ids); ids.forEach(i=>LIVE.names[i]=ps[i]||{}); refreshComm(); }catch(_){}
+}
+async function initLive(){
+  let db=null,user=null; const assets=null;
+  if(window.claude&&window.claude.use){ [db,user]=await Promise.all(['db','user'].map(n=>window.claude.use(n).catch(()=>null))); }
+  else if(GH){ db=localDB(); LIVE.local=true; LIVE.uid='me'; LIVE.owner=true; LIVE.canWrite=true; LIVE.names.me={name:'أنت'}; }
+  else { LIVE.failed=true; refreshComm(); return; }
+  if(!db){ LIVE.failed=true; refreshComm(); return; }
+  Object.assign(LIVE,{db,user,assets});
+  if(user){ try{LIVE.uid=await user.id();}catch(_){} try{LIVE.owner=!!(await user.isOwner());}catch(_){} try{LIVE.canWrite=await user.can('data.write');}catch(_){} }
+  const timer=setTimeout(()=>{LIVE.timedOut=true;refreshComm();},10000);
+  db.collection('posts').limit(1000).onSnapshot(snap=>{
+    const all=[]; snap.docs.forEach(d=>{const items=(d.data()||{}).items; if(Array.isArray(items)) items.forEach(it=>{ if(it&&byId[it.city]) all.push({...it,uid:d.id}); });});
+    LIVE.posts=all; if(!snap.metadata.fromCache){LIVE.ready=true;clearTimeout(timer);} refreshComm(); resolveNames();
+  },()=>{clearTimeout(timer);LIVE.ready=true;LIVE.timedOut=true;refreshComm();});
+  refreshComm();
+}
+let writing=Promise.resolve();
+function myItems(uid){ return LIVE.posts.filter(p=>p.uid===uid).map(({uid,...rest})=>rest); }
+async function saveItems(uid,items){ const ref=LIVE.db.doc('posts/'+uid); writing=writing.then(()=>ref.set({items})).catch(e=>{throw e}); return writing; }
+function shrinkData(file){ return new Promise((res,rej)=>{ const img=new Image(); const u=URL.createObjectURL(file); img.onload=()=>{ URL.revokeObjectURL(u); let max=1000,q=.8,out='';
+    for(let i=0;i<10;i++){ const k=Math.min(1,max/Math.max(img.width,img.height)); const cv=document.createElement('canvas'); cv.width=Math.round(img.width*k); cv.height=Math.round(img.height*k); cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height); out=cv.toDataURL('image/jpeg',q); if(out.length<180000) break; if(q>.55) q-=.1; else max=Math.round(max*.8); }
+    out.length<240000?res(out):rej({code:'too_large'}); }; img.onerror=()=>{URL.revokeObjectURL(u);rej({code:'unsupported_type'})}; img.src=u; }); }
+function shrink(file){ return new Promise((res,rej)=>{ const img=new Image(); const u=URL.createObjectURL(file); img.onload=()=>{ const k=Math.min(1,1400/Math.max(img.width,img.height)); const cv=document.createElement('canvas'); cv.width=Math.round(img.width*k); cv.height=Math.round(img.height*k); cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height); URL.revokeObjectURL(u); cv.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',.82); }; img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error('x'))}; img.src=u; }); }
+async function submitPost(cid){
+  const text=($('#ctext')?.value||'').trim();
+  if(!text&&!draft.file){ toast('اكتب تجربتك أو أضف صورة'); return; }
+  draft.busy=true; refreshComm(); $('#ctext')&&($('#ctext').value=text);
+  try{
+    const item={id:Math.random().toString(36).slice(2,10)+Date.now().toString(36),city:cid,kind:draft.kind,text:text.slice(0,600),at:Date.now()};
+    if(draft.file){ const d=await shrinkData(draft.file); await LIVE.db.doc('posts/'+LIVE.uid+'/pics/'+item.id).set({d,at:item.at}); PICS[LIVE.uid+'/'+item.id]=d; item.pic=item.id; }
+    if(draft.kind==='review') item.rating=draft.rating;
+    const items=[item,...myItems(LIVE.uid)].slice(0,60);
+    await saveItems(LIVE.uid,items);
+    draft={rating:5,kind:draft.kind,file:null,preview:null,busy:false}; refreshComm(); const t=$('#ctext'); if(t) t.value=''; toast('انتشرت تجربتك، شكرًا لك ✓');
+  }catch(e){
+    draft.busy=false; refreshComm(); const t=$('#ctext'); if(t) t.value=text;
+    const c=e&&e.code; if(c==='invalid_argument'){LIVE.canWrite=false;refreshComm();toast('ما تقدر تنشر هنا، المشاركة لأعضاء الموقع');}
+    else if(c==='too_large') toast('الصورة كبيرة، جرّب صورة أصغر'); else if(c==='unsupported_type') toast('نوع الصورة غير مدعوم'); else if(c==='quota_exceeded'||c==='quota_or_state') toast('امتلأت مساحة الموقع، ما نقدر نضيف الحين'); else if(c==='not_granted') toast('رفع الصور غير متاح لك'); else toast('ما انتشرت، حاول مرة ثانية');
+  }
+}
+async function deletePost(uid,id){
+  const items=LIVE.posts.filter(p=>p.uid===uid&&p.id!==id).map(({uid,...r})=>r);
+  const old=LIVE.posts.find(p=>p.uid===uid&&p.id===id);
+  try{ await saveItems(uid,items); if(old&&old.pic){ try{ await LIVE.db.doc('posts/'+uid+'/pics/'+old.pic).delete(); }catch(_){} } toast('انحذفت'); }catch(_){ toast('ما قدرنا نحذفها'); }
+}
+
+/* ---------- real map (GitHub version: MapLibre + OpenFreeMap + Esri + AWS terrain) ---------- */
+const LL={riyadh:[46.7167,24.6877],jeddah:[39.1728,21.5433],alula:[37.9187,26.6085],abha:[42.5053,18.2164],taif:[40.4158,21.2703],ahsa:[49.5863,25.383],madinah:[39.6118,24.4686],tabuk:[36.5662,28.3835],unaizah:[43.9919,26.0843],baha:[41.4677,20.0129]};
+const KSA=[[34.4,16.2],[55.8,32.3]];
+const gmq=(n,c)=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(n+(c?' '+c:''));
+const gmdir=(lon,lat)=>'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lon;
+const GL=(()=>{ if(!GH||typeof maplibregl==='undefined') return false; try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;} })();
+let MAPS=[]; const MV={home:null,detail:null,pin:null};
+const ML_LOCALE={'NavigationControl.ZoomIn':'تكبير','NavigationControl.ZoomOut':'تصغير','NavigationControl.ResetBearing':'رجّع الاتجاه للشمال','GeolocateControl.FindMyLocation':'موقعي','GeolocateControl.LocationNotAvailable':'الموقع غير متاح','FullscreenControl.Enter':'ملء الشاشة','FullscreenControl.Exit':'خروج من ملء الشاشة','AttributionControl.ToggleAttribution':'المصادر','CooperativeGesturesHandler.WindowsHelpText':'استخدم Ctrl مع عجلة الماوس للتكبير','CooperativeGesturesHandler.MacHelpText':'استخدم ⌘ مع عجلة الماوس للتكبير','CooperativeGesturesHandler.MobileHelpText':'استخدم إصبعين لتحريك الخريطة'};
+if(GL){ try{ maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',true); }catch(_){} }
+function setSat(map,on){ if(map.getLayer('sat')) map.setLayoutProperty('sat','visibility',on?'visible':'none'); }
+function set3D(map,on){ try{ map.setTerrain(on?{source:'dem',exaggeration:1.5}:null); }catch(_){} map.easeTo({pitch:on?60:0,bearing:on?map.getBearing():0,duration:900}); }
+class ModeCtl{ onAdd(map){ const d=document.createElement('div'); d.className='maplibregl-ctrl maplibregl-ctrl-group modes';
+  d.innerHTML='<button type="button" data-mode="sat" aria-pressed="false">قمر صناعي</button><button type="button" data-mode="3d" aria-pressed="true">3D</button>';
+  d.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',String(on)); b.dataset.mode==='sat'?setSat(map,on):set3D(map,on); });
+  this.d=d; return d; } onRemove(){ this.d.remove(); } }
+function styleMap(map){
+  const layers=map.getStyle().layers||[];
+  layers.forEach(l=>{ const tf=l.type==='symbol'&&l.layout&&l.layout['text-field']; if(tf&&JSON.stringify(tf).includes('name')){ try{ map.setLayoutProperty(l.id,'text-field',['coalesce',['get','name:ar'],['get','name']]); }catch(_){} } });
+  const firstSym=(layers.find(l=>l.type==='symbol')||{}).id;
+  const firstBld=(layers.find(l=>/building/.test(l.id))||{}).id||firstSym;
+  const dem={type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:14,attribution:'التضاريس © Mapzen'};
+  try{
+    map.addSource('sat',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19,attribution:'صور الأقمار الصناعية © Esri'});
+    map.addSource('dem',dem); map.addSource('dem2',dem);
+    map.addLayer({id:'hills',type:'hillshade',source:'dem2',paint:{'hillshade-exaggeration':.35,'hillshade-shadow-color':'#5B4A36','hillshade-highlight-color':'#FFFFFF'}},firstBld);
+    map.addLayer({id:'sat',type:'raster',source:'sat',layout:{visibility:'none'}},firstBld);
+    map.setTerrain({source:'dem',exaggeration:1.5});
+  }catch(e){ console.warn('map layers',e); }
+}
+function makeMap(el,o){
+  const map=new maplibregl.Map({container:el,style:'https://tiles.openfreemap.org/styles/liberty',center:o.center,zoom:o.zoom,bounds:o.bounds,fitBoundsOptions:{padding:28},pitch:o.pitch??55,bearing:o.bearing||0,maxPitch:78,cooperativeGestures:true,attributionControl:{compact:true},locale:ML_LOCALE});
+  map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-left');
+  map.addControl(new maplibregl.GeolocateControl({positionOptions:{enableHighAccuracy:true}}),'top-left');
+  map.addControl(new maplibregl.FullscreenControl({container:o.wrap||el.parentElement}),'top-left');
+  map.addControl(new ModeCtl(),'bottom-right');
+  map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
+  map.on('load',()=>styleMap(map));
+  map.on('error',e=>console.warn('map:',e&&e.error&&e.error.message));
+  MAPS.push(map); return map;
+}
+function cityMarker(map,c,onPick){
+  const el=document.createElement('button'); el.type='button'; el.className='cm'+(c.id===selCity?' on':''); el.dataset.c=c.id; el.setAttribute('aria-label',c.name);
+  el.innerHTML=`<span>${c.name}</span><i></i>`;
+  if(onPick) el.addEventListener('click',ev=>{ev.stopPropagation();onPick(c.id);}); else el.tabIndex=-1;
+  new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat(LL[c.id]).addTo(map); return el;
+}
+const flyCity=(map,c)=>map.flyTo({center:LL[c.id],zoom:c.kind==='city'?14.6:12.2,pitch:62,bearing:-25,duration:3600,essential:true});
+function pickCity(id){
+  selCity=id; document.querySelectorAll('.cm').forEach(b=>b.classList.toggle('on',b.dataset.c===id));
+  const pv=$('#pv'); if(pv) pv.innerHTML=previewHTML(byId[id]);
+  if(MV.home) flyCity(MV.home,byId[id]);
+}
+function dropPin(map,lon,lat,name){
+  if(MV.pin) MV.pin.remove();
+  const pop=new maplibregl.Popup({offset:28,closeButton:true,maxWidth:'260px'}).setDOMContent((()=>{const d=document.createElement('div');d.className='mpop';d.innerHTML=`<b></b><div><a target="_blank" rel="noopener" href="${gmq(lat+','+lon)}">افتح في قوقل ماب</a><a target="_blank" rel="noopener" href="${gmdir(lon,lat)}">الاتجاهات</a></div>`;d.querySelector('b').textContent=name;return d;})());
+  MV.pin=new maplibregl.Marker({color:'#D0645A'}).setLngLat([lon,lat]).setPopup(pop).addTo(map); MV.pin.togglePopup();
+  map.flyTo({center:[lon,lat],zoom:16.2,pitch:62,bearing:map.getBearing()||-20,duration:3000,essential:true});
+}
+const GEO=store.get('geo',{});
+async function geocode(q,near,limit=1){
+  const key=q+'|'+(near?near.join(','):'')+'|'+limit; if(GEO[key]) return GEO[key];
+  let u='https://nominatim.openstreetmap.org/search?format=jsonv2&accept-language=ar&countrycodes=sa&limit='+limit+'&q='+encodeURIComponent(q);
+  if(near) u+=`&viewbox=${near[0]-.9},${near[1]+.9},${near[0]+.9},${near[1]-.9}&bounded=1`;
+  const r=await fetch(u,{headers:{'Accept':'application/json'}}); if(!r.ok) throw new Error('geo');
+  const j=(await r.json()).map(x=>({lon:+x.lon,lat:+x.lat,n:x.name||x.display_name.split('،')[0].split(',')[0],d:x.display_name}));
+  if(j.length){ GEO[key]=j; store.set('geo',GEO); } return j;
+}
+async function geoPlace(cid,idx){
+  const c=byId[cid], p=placesOf(c)[idx]; if(!p||!MV.detail) return;
+  const box=$('#dmapc'); if(box) box.scrollIntoView({behavior:'smooth',block:'center'});
+  toast('نبحث عن «'+p.n+'» في الخريطة…');
+  try{
+    let r=await geocode(p.n,LL[cid]); if(!r.length) r=await geocode(p.n+' '+c.name);
+    if(!r.length){ toast('ما لقيناه بالخريطة، افتحه في قوقل ماب'); return; }
+    dropPin(MV.detail,r[0].lon,r[0].lat,p.n);
+  }catch(_){ toast('ما قدرنا نبحث الحين، جرّب بعد شوي'); }
+}
+let msT=0;
+function mapSearch(q){
+  const box=$('#msugg'); if(!box) return; clearTimeout(msT); q=q.trim();
+  if(!q){ box.hidden=true; return; }
+  const loc=[]; CITIES.forEach(c=>{ if(c.name.includes(q)) loc.push(`<button type="button" data-mc="${c.id}">${ic('pin')}<span>${c.name}</span><small>${c.region}</small></button>`); });
+  box.innerHTML=loc.join('')+`<p class="state">نبحث في الخريطة…</p>`; box.hidden=false;
+  msT=setTimeout(async()=>{
+    try{ const r=await geocode(q,null,6); if($('#mq')?.value.trim()!==q) return;
+      box.innerHTML=loc.join('')+(r.length?r.map(x=>`<button type="button" data-ll="${x.lon},${x.lat}" data-n="${esc(x.n)}">${ic('pin')}<span>${esc(x.n)}</span><small>${esc(x.d)}</small></button>`).join(''):(loc.length?'':`<p class="state">ما فيه نتائج</p>`));
+    }catch(_){ box.innerHTML=loc.join('')+`<p class="state">البحث غير متاح الحين</p>`; }
+  },550);
+}
+function initMaps(){
+  if(!GL) return;
+  const h=$('#gmap');
+  if(h){ try{
+    MV.home=makeMap(h,{bounds:KSA,pitch:45,bearing:0,wrap:$('#gmapc')});
+    CITIES.forEach(c=>cityMarker(MV.home,c,pickCity));
+  }catch(e){ console.warn(e); } }
+  const d=$('#dmap');
+  if(d){ try{ const c=byId[d.dataset.city];
+    MV.detail=makeMap(d,{center:LL[c.id],zoom:c.kind==='city'?13.4:11.4,pitch:60,bearing:-25,wrap:$('#dmapc')});
+    cityMarker(MV.detail,c,null);
+  }catch(e){ console.warn(e); } }
+}
+function killMaps(){ MAPS.forEach(m=>{try{m.remove();}catch(_){}}); MAPS=[]; MV.home=MV.detail=MV.pin=null; }
+function localDB(){
+  const K='wj_localdb'; let data; try{data=JSON.parse(localStorage.getItem(K))||{};}catch(_){data={};}
+  const subs=[]; const save=()=>{ try{localStorage.setItem(K,JSON.stringify(data));}catch(_){ throw {code:'quota_exceeded'}; } };
+  const snap=()=>({metadata:{fromCache:false},docs:Object.keys(data).filter(k=>/^posts\/[^/]+$/.test(k)).map(k=>({id:k.split('/')[1],data:()=>data[k]}))});
+  const emit=()=>subs.forEach(f=>f(snap()));
+  return {
+    doc:p=>({ get:async()=>({exists:p in data,data:()=>data[p]}),
+      set:async v=>{ const had=p in data, old=data[p]; data[p]=v; try{save();}catch(e){ if(had) data[p]=old; else delete data[p]; throw e; } emit(); },
+      delete:async()=>{ delete data[p]; save(); emit(); } }),
+    collection:()=>({ limit(){return this;}, onSnapshot(f){ subs.push(f); setTimeout(()=>f(snap())); return ()=>{}; } })
+  };
+}
+
+/* ---------- router & events ---------- */
+function render(){
+  killMaps(); const r=current(); const V=$('#view');
+  if(byId[r]){ selCity=r; V.innerHTML=details(byId[r]); document.title=byId[r].name+' · وجهتي'; }
+  else if(r==='cities'){ V.innerHTML=cities(); document.title='المدن · وجهتي'; }
+  else if(r==='plan'){ V.innerHTML=planScreen(); document.title='رحلتي · وجهتي'; }
+  else if(r==='fav'){ V.innerHTML=favScreen(); document.title='المفضلة · وجهتي'; }
+  else if(r==='admin'){ V.innerHTML=adminScreen(); document.title='الإدارة · وجهتي'; }
+  else { V.innerHTML=home(); document.title='وجهتي'; }
+  drawNav(); window.scrollTo(0,0); startEye(); initMaps();
+}
+let planDays=null;
+document.addEventListener('click',e=>{
+  const t=e.target;
+  const pin=t.closest('.pin');
+  if(pin){ selCity=pin.dataset.c; document.querySelectorAll('.pin').forEach(p=>p.classList.toggle('on',p===pin)); $('#pv').innerHTML=previewHTML(byId[selCity]); if(innerWidth<860) $('#pv').scrollIntoView({behavior:'smooth',block:'nearest'}); return; }
+  const m=t.closest('.month'); if(m){ selMonth=+m.dataset.m; document.querySelectorAll('.month').forEach(x=>x.setAttribute('aria-pressed',String(x===m))); $('#mres').innerHTML=monthRes(); return; }
+  const ch=t.closest('#types .chip'); if(ch){ fType=ch.dataset.t; document.querySelectorAll('#types .chip').forEach(x=>x.setAttribute('aria-pressed',String(x===ch))); $('#clist').innerHTML=cityList(); return; }
+  const fv=t.closest('[data-fav]'); if(fv){ const [cid,...n]=fv.dataset.fav.split('|'); toggleFav(cid,n.join('|'),fv); if(current()==='fav') render(); return; }
+  if(t.closest('[data-quiz]')){ quiz(); return; }
+  const pl=t.closest('[data-plan]'); if(pl){ plan=buildPlan(pl.dataset.plan, plan&&plan.city===pl.dataset.plan?plan.days:2); store.set('plan',plan); if(location.hash==='#plan') render(); else location.hash='plan'; return; }
+  const pd=t.closest('#pdays button'); if(pd){ planDays=+pd.dataset.d; document.querySelectorAll('#pdays button').forEach(x=>x.setAttribute('aria-pressed',String(x===pd))); return; }
+  const rm=t.closest('[data-rm]'); if(rm){ const [d,s]=rm.dataset.rm.split('-').map(Number); plan.items[d].splice(s,1); store.set('plan',plan); $('#plist').innerHTML=planList(); toast('انحذف النشاط'); return; }
+  if(t.closest('#pclear')){ plan=null; store.set('plan',null); render(); return; }
+  const dl=t.closest('[data-del]'); if(dl){ const [cid,i]=dl.dataset.del.split('-'); extra[cid].splice(+i,1); if(!extra[cid].length) delete extra[cid]; store.set('extra',extra); render(); toast('انحذف المكان'); return; }
+  const gg=t.closest('[data-geo]'); if(gg){ const [cid,i]=gg.dataset.geo.split('|'); geoPlace(cid,+i); return; }
+  const mc=t.closest('[data-mc]'); if(mc){ $('#msugg').hidden=true; pickCity(mc.dataset.mc); return; }
+  const mll=t.closest('[data-ll]'); if(mll){ $('#msugg').hidden=true; const [lo,la]=mll.dataset.ll.split(',').map(Number); if(MV.home) dropPin(MV.home,lo,la,mll.dataset.n); return; }
+  if(t.closest('#mreset')){ if(MV.home){ if(MV.pin){MV.pin.remove();MV.pin=null;} MV.home.fitBounds(KSA,{padding:28,pitch:45,bearing:0,duration:2500}); } return; }
+  if(!t.closest('#ms')){ const s=$('#msugg'); if(s) s.hidden=true; }
+  const sg=t.closest('#hsugg button'); if(sg){ location.hash=sg.dataset.c; return; }
+  const kd=t.closest('[data-kind]'); if(kd){ draft.kind=kd.dataset.kind; refreshComm(); return; }
+  const rt=t.closest('[data-rate]'); if(rt){ draft.rating=+rt.dataset.rate; document.querySelectorAll('[data-rate]').forEach(x=>x.setAttribute('aria-pressed',String(x===rt))); return; }
+  if(t.closest('#cphotoX')){ if(draft.preview) URL.revokeObjectURL(draft.preview); draft.file=null; draft.preview=null; refreshComm(); return; }
+  const lb=t.closest('[data-lb]'); if(lb){ const v=PICS[lb.dataset.lb]; if(typeof v!=='string') return; const L=$('#layer'); L.innerHTML='<div class="lb"><img alt="صورة من زائر"></div>'; L.querySelector('img').src=v; L.onclick=()=>{L.innerHTML='';}; return; }
+  const dp=t.closest('[data-delpost]'); if(dp){ const [u,i]=dp.dataset.delpost.split('|'); if(dp.dataset.sure){ deletePost(u,i); } else { dp.dataset.sure='1'; dp.textContent='متأكد؟ اضغط مرة ثانية للحذف'; setTimeout(()=>{ if(dp.isConnected){ delete dp.dataset.sure; dp.textContent='حذف'; } },4000); } return; }
+  if(!t.closest('#hs')) { const s=$('#hsugg'); if(s) s.hidden=true; }
+});
+document.addEventListener('keydown',e=>{ const pin=e.target.closest&&e.target.closest('.pin'); if(pin&&(e.key==='Enter'||e.key===' ')){e.preventDefault();pin.dispatchEvent(new MouseEvent('click',{bubbles:true}));} });
+document.addEventListener('change',e=>{
+  if(e.target.id==='cphoto'){ const f=e.target.files&&e.target.files[0]; if(!f) return; if(!/^image\//.test(f.type)){toast('اختر صورة');return;} if(draft.preview) URL.revokeObjectURL(draft.preview); draft.file=f; draft.preview=URL.createObjectURL(f); const t=$('#ctext'); const v=t?t.value:''; refreshComm(); const t2=$('#ctext'); if(t2) t2.value=v; }
+});
+document.addEventListener('input',e=>{
+  if(e.target.id==='mq'){ mapSearch(e.target.value); }
+  if(e.target.id==='lq'){ fQ=e.target.value; $('#clist').innerHTML=cityList(); }
+  if(e.target.id==='hq'){
+    const q=e.target.value.trim(), box=$('#hsugg');
+    if(!q){box.hidden=true;return;}
+    const res=[]; CITIES.forEach(c=>{ if(c.name.includes(q)||c.region.includes(q)) res.push([c,c.name,c.region]); placesOf(c).forEach(p=>{ if(p.n.includes(q)) res.push([c,p.n,c.name]); }); });
+    box.innerHTML=res.length?res.slice(0,6).map(([c,a,b])=>`<button data-c="${c.id}">${ic('pin')}<span>${esc(a)}</span><small>${esc(b)}</small></button>`).join(''):`<button disabled><span>ما فيه نتائج</span></button>`;
+    box.hidden=false;
+  }
+});
+document.addEventListener('keydown',e=>{ if(e.target.id==='mq'&&e.key==='Enter'){ e.preventDefault(); const b=$('#msugg button'); if(b) b.click(); return; } if(e.target.id==='hq'&&e.key==='Enter'){ const b=$('#hsugg button[data-c]'); if(b) location.hash=b.dataset.c; } });
+document.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(e.target.id==='cform'){ if(!draft.busy) submitPost($('#comm').dataset.city); return; }
+  if(e.target.id==='pform'){ const cid=$('#pcity').value; const d=planDays||(plan?plan.days:2); plan=buildPlan(cid,d); planDays=null; store.set('plan',plan); render(); toast('رتّبنا رحلتك ✓'); }
+  if(e.target.id==='aform'){ const cid=$('#acity').value; const n=$('#aname').value.trim(), d=$('#adesc').value.trim(); if(!n||!d) return;
+    (extra[cid]=extra[cid]||[]).push({n,d,t:$('#atime').value}); store.set('extra',extra); render(); toast('انضاف المكان إلى '+byId[cid].name); }
+});
+addEventListener('hashchange',render);
+render();
+initLive();
+</script>
+
+</body>
+</html>
