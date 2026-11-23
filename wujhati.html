@@ -927,7 +927,7 @@ const LL={riyadh:[46.7167,24.6877],jeddah:[39.1728,21.5433],alula:[37.9187,26.60
 const KSA=[[34.4,16.2],[55.8,32.3]];
 const gmq=(n,c)=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(n+(c?' '+c:''));
 const gmdir=(lon,lat)=>'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lon;
-const GL=(()=>{ if(!GH||typeof maplibregl==='undefined') return false; try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;} })();
+let GL=(()=>{ if(!GH||typeof maplibregl==='undefined') return false; try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;} })();
 let MAPS=[]; const MV={home:null,detail:null,pin:null};
 const ML_LOCALE={'NavigationControl.ZoomIn':'تكبير','NavigationControl.ZoomOut':'تصغير','NavigationControl.ResetBearing':'رجّع الاتجاه للشمال','GeolocateControl.FindMyLocation':'موقعي','GeolocateControl.LocationNotAvailable':'الموقع غير متاح','FullscreenControl.Enter':'ملء الشاشة','FullscreenControl.Exit':'خروج من ملء الشاشة','AttributionControl.ToggleAttribution':'المصادر','CooperativeGesturesHandler.WindowsHelpText':'استخدم Ctrl مع عجلة الماوس للتكبير','CooperativeGesturesHandler.MacHelpText':'استخدم ⌘ مع عجلة الماوس للتكبير','CooperativeGesturesHandler.MobileHelpText':'استخدم إصبعين لتحريك الخريطة'};
 if(GL){ try{ maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js',true); }catch(_){} }
@@ -952,7 +952,9 @@ function styleMap(map){
   }catch(e){ console.warn('map layers',e); }
 }
 function makeMap(el,o){
-  const map=new maplibregl.Map({container:el,style:'https://tiles.openfreemap.org/styles/liberty',center:o.center,zoom:o.zoom,bounds:o.bounds,fitBoundsOptions:{padding:28},pitch:o.pitch??55,bearing:o.bearing||0,maxPitch:78,cooperativeGestures:true,attributionControl:{compact:true},locale:ML_LOCALE});
+  const opt={container:el,style:'https://tiles.openfreemap.org/styles/liberty',pitch:o.pitch??55,bearing:o.bearing||0,maxPitch:78,cooperativeGestures:true,attributionControl:{compact:true},locale:ML_LOCALE};
+  if(o.bounds){ opt.bounds=o.bounds; opt.fitBoundsOptions={padding:28}; } else { opt.center=o.center; opt.zoom=o.zoom; }
+  const map=new maplibregl.Map(opt);
   map.addControl(new maplibregl.NavigationControl({visualizePitch:true}),'top-left');
   map.addControl(new maplibregl.GeolocateControl({positionOptions:{enableHighAccuracy:true}}),'top-left');
   map.addControl(new maplibregl.FullscreenControl({container:o.wrap||el.parentElement}),'top-left');
@@ -1017,13 +1019,14 @@ function initMaps(){
   if(h){ try{
     MV.home=makeMap(h,{bounds:KSA,pitch:45,bearing:0,wrap:$('#gmapc')});
     CITIES.forEach(c=>cityMarker(MV.home,c,pickCity));
-  }catch(e){ console.warn(e); } }
+  }catch(e){ console.warn(e); mapFail(); return; } }
   const d=$('#dmap');
   if(d){ try{ const c=byId[d.dataset.city];
     MV.detail=makeMap(d,{center:LL[c.id],zoom:c.kind==='city'?13.4:11.4,pitch:60,bearing:-25,wrap:$('#dmapc')});
     cityMarker(MV.detail,c,null);
-  }catch(e){ console.warn(e); } }
+  }catch(e){ console.warn(e); mapFail(); return; } }
 }
+function mapFail(){ GL=false; killMaps(); const y=scrollY; render(); scrollTo(0,y); }
 function killMaps(){ MAPS.forEach(m=>{try{m.remove();}catch(_){}}); MAPS=[]; MV.home=MV.detail=MV.pin=null; }
 function localDB(){
   const K='wj_localdb'; let data; try{data=JSON.parse(localStorage.getItem(K))||{};}catch(_){data={};}
