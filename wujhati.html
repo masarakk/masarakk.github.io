@@ -640,7 +640,7 @@ footer{max-width:1120px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-rig
 .mp-bar .ghint{font-size:13.5px}
 #gmapbox.playing .maplibregl-ctrl-bottom-right,#gmapbox.playing .maplibregl-ctrl-bottom-left{bottom:120px}
 #gmapbox.playing .maplibregl-ctrl-top-left{top:64px}
-.mpspot{position:relative;width:58px;height:30px;border:0;background:none;padding:0;cursor:pointer}
+.mpspot{width:58px;height:30px;border:0;background:none;padding:0;cursor:pointer}
 .mpspot::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22px;border-radius:50%;background:radial-gradient(ellipse at center,#5A3C22 0 45%,#8A6239 46% 70%,transparent 72%);box-shadow:0 0 0 3px rgba(255,255,255,.55)}
 .mpspot.st-empty::after{content:"+";position:absolute;left:50%;bottom:24px;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:#fff;color:var(--green);font:700 20px/28px Arial;box-shadow:0 4px 12px rgba(0,0,0,.35);animation:pulse3 1.4s ease-in-out infinite}
 @keyframes pulse3{50%{transform:translateX(-50%) translateY(-5px) scale(1.1)}}
@@ -649,18 +649,111 @@ footer{max-width:1120px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-rig
 .mptree{position:absolute;left:50%;bottom:8px;width:110px;transform:translateX(-50%) scale(var(--k));transform-origin:50% 100%;pointer-events:none;filter:drop-shadow(0 8px 6px rgba(0,0,0,.35))}
 .mptree svg{width:100%;display:block;overflow:visible}
 .mptree.grow{animation:growT2 1.4s cubic-bezier(.2,1.4,.4,1)}@keyframes growT2{from{transform:translateX(-50%) scale(.3)}}
-.mptree.other{position:relative;left:0;bottom:0;transform:scale(var(--k));opacity:.95}
+.mpo .mptree{opacity:.95}
 .mpspot .gwater{top:-70px}
 .mpchar{width:64px;z-index:5}.mpchar .cname{bottom:100%}
 .mpinfo{display:flex;flex-direction:column;align-items:center;background:none;border:0;font-size:30px;cursor:pointer;animation:pulse2b 1.8s ease-in-out infinite}
 .mpinfo span{font:600 11px var(--fd);background:#fff;color:#7A5A2E;border-radius:999px;padding:0 8px}
 .mpinfo.seen{animation:none;opacity:.65}
 .mpbub{left:50%!important;top:40%!important;z-index:9}
-.mpwincard{position:absolute;left:10px;right:10px;bottom:36px;z-index:8;direction:rtl}
+.mpwincard{position:absolute;left:10px;right:10px;bottom:36px;z-index:12;direction:rtl}
 #gmapbox.before .mptree,#gmapbox.before .gwater{opacity:0;transition:opacity .6s}
 #gmapbox .mptree{transition:opacity .6s}
 #gmapbox.before canvas{filter:saturate(.5) sepia(.25)}
 @media (max-width:600px){.mp-hud .gh-t small{display:none}.mpchar{width:52px}.mptree{width:90px}}
+
+/* free planting controls */
+.dpad{position:absolute;z-index:9;left:12px;bottom:12px;width:132px;height:132px;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);direction:ltr}
+.dpad button{width:44px;height:44px;border-radius:14px;border:0;background:rgba(255,255,255,.88);color:#12241F;font-size:16px;box-shadow:0 4px 12px rgba(0,0,0,.3);cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none}
+.dpad button:active{background:#fff;transform:scale(.92)}
+.dpad .up{grid-area:1/2}.dpad .lf{grid-area:2/1}.dpad .rt{grid-area:2/3}.dpad .dn{grid-area:3/2}
+#mpdpad{bottom:150px}
+.mp-act{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.mp-act .ghint{flex:1;margin:0}
+.mp-act .btn{white-space:nowrap;padding:10px 18px;font-size:15px}
+@media (max-width:600px){.dpad{width:120px;height:120px}.dpad button{width:40px;height:40px}#mpdpad{bottom:170px}.mp-act .ghint{font-size:12.5px}}
+
+/* story chapter */
+.story{display:flex;flex-direction:column;gap:10px}
+.st-box{position:relative;aspect-ratio:16/9;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(60,20,30,.6);background:#2B2350;touch-action:none;user-select:none;-webkit-user-select:none}
+@media (max-width:760px){.st-box{aspect-ratio:4/5}}
+.st-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.st-cover{position:absolute;inset:0;display:grid;place-items:center;padding:20px;text-align:center;color:#fff;background:linear-gradient(180deg,rgba(43,35,80,.35),rgba(30,15,30,.75));transition:opacity .6s}
+.st-cover.out{opacity:0;pointer-events:none}
+.st-cover>div{max-width:440px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.st-cover small{opacity:.8;font-family:var(--fd)}.st-cover h2{color:#FFE2B0;font-size:clamp(30px,6vw,46px);margin:0;font-weight:600;text-shadow:0 4px 20px rgba(0,0,0,.4)}
+.st-cover p{margin:0 0 8px;line-height:1.9;color:#F5E8DA}
+.st-tip{font-size:12px}
+.st-sub{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);max-width:86%;background:rgba(20,12,24,.62);color:#FFF2E0;font:500 15px/1.8 var(--fd);padding:8px 18px;border-radius:16px;backdrop-filter:blur(6px);text-align:center;opacity:0}
+.st-sub.in{animation:stIn 4.2s ease forwards}@keyframes stIn{0%{opacity:0;transform:translate(-50%,8px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.st-hud{position:absolute;top:12px;right:12px;left:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.st-hud span{background:rgba(255,255,255,.88);color:#12241F;border-radius:999px;padding:3px 14px;font:600 15px var(--fd)}
+.st-mute{pointer-events:auto;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.88);cursor:pointer;font-size:16px}
+.st-ctl{position:absolute;left:12px;bottom:12px;display:flex;gap:8px;direction:ltr}
+.st-ctl button{width:52px;height:52px;border-radius:50%;border:0;background:rgba(255,255,255,.82);font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.3);touch-action:none;cursor:pointer}
+.st-act{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:min(400px,88%);display:flex;justify-content:center}
+.st-act[hidden]{display:none}
+.st-act:has(.st-endc){top:56px;transform:translateX(-50%)}
+.st-endc{padding:14px 18px!important}.st-endc h3{font-size:19px!important}.st-endc p{font-size:14px;margin-bottom:10px!important}
+.st-act .btn{font-size:17px;padding:12px 24px;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:pop .3s ease}
+.st-endc{background:rgba(255,248,236,.95);color:#2A1C24;border-radius:22px;padding:20px 22px;text-align:center;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:pop .4s ease}
+.st-endc h3{margin:0 0 6px;font:600 22px var(--fd)}.st-endc p{margin:0 0 12px;color:#5A4A50}.st-endc .row{justify-content:center;gap:8px;flex-wrap:wrap}
+
+/* game controls on satellite map */
+#gmapbox.playing{height:min(720px,84vh)}
+.mphint{position:absolute;left:50%;top:70px;transform:translateX(-50%);z-index:7;margin:0;background:rgba(12,40,33,.72);color:#fff;font:500 13.5px var(--fd);padding:5px 14px;border-radius:999px;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(6px);direction:rtl}
+.joy{position:absolute;z-index:9;left:18px;bottom:44px;width:128px;height:128px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,.12));border:2px solid rgba(255,255,255,.55);box-shadow:0 8px 24px rgba(0,0,0,.3);backdrop-filter:blur(4px);touch-action:none}
+.joy i{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#E6EFEA);box-shadow:0 6px 16px rgba(0,0,0,.35);transition:transform .12s}
+.joy.on i{transition:none}
+.mpact{position:absolute;z-index:9;right:18px;bottom:44px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;direction:rtl}
+.mptrees{display:flex;flex-direction:column;gap:6px}
+.mpt{display:flex;align-items:center;gap:6px;border:2px solid transparent;background:rgba(255,255,255,.9);border-radius:999px;padding:2px 10px 2px 2px;font:500 12.5px var(--fd);color:#12241F;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25)}
+.mpt img{width:30px;height:30px;border-radius:50%;object-fit:cover}
+.mpt[aria-pressed="true"]{border-color:#2FA36B;background:#E3F6EA}
+.actbtn{width:88px;height:88px;border-radius:50%;border:4px solid rgba(255,255,255,.9);background:radial-gradient(circle at 35% 30%,#2FA36B,#0F5B4B);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;cursor:pointer;box-shadow:0 10px 26px rgba(0,0,0,.4);touch-action:manipulation}
+.actbtn b{font-size:30px;line-height:1}.actbtn span{font:600 13px var(--fd)}
+.actbtn:active{transform:scale(.93)}
+.actbtn.water{background:radial-gradient(circle at 35% 30%,#5DB7EA,#1F6FA8);animation:pulse4 1.2s ease-in-out infinite}
+@keyframes pulse4{50%{box-shadow:0 0 0 10px rgba(93,183,234,.3),0 10px 26px rgba(0,0,0,.4)}}
+.mpmute{position:absolute;z-index:9;top:70px;left:14px}
+.mpchar{width:78px}
+.mpchar::before{content:"";position:absolute;left:50%;bottom:-4px;width:56%;height:12px;margin-left:-28%;border-radius:50%;background:rgba(0,0,0,.35);filter:blur(2px)}
+.mpchar.walk .charsvg{animation:bob2 .32s ease-in-out infinite alternate}@keyframes bob2{to{transform:translateY(-3px)}}
+.mpchar.walk.flip .charsvg{animation:bob2f .32s ease-in-out infinite alternate}@keyframes bob2f{from{transform:scaleX(-1)}to{transform:scaleX(-1) translateY(-3px)}}
+#gmapbox.playing .maplibregl-ctrl-bottom-left,#gmapbox.playing .maplibregl-ctrl-bottom-right{display:none}
+#gmapbox.playing .maplibregl-ctrl-top-left{top:110px}
+@media (max-width:600px){.joy{width:112px;height:112px;left:12px;bottom:40px}.joy i{width:48px;height:48px;margin:-24px 0 0 -24px}.actbtn{width:78px;height:78px}.mpact{right:12px;bottom:40px}.mpt span{display:none}.mpt{padding:2px}.mpchar{width:66px}.mphint{font-size:12px;top:64px}}
+
+/* ===== satellite game: full-screen, marker-safe ===== */
+html.noscroll,html.noscroll body{overflow:hidden}
+.toast{z-index:140}
+#gmapbox.playing{position:fixed;inset:0;height:auto;z-index:60;border-radius:0;touch-action:none}
+#gmapbox.playing .gmb-h{display:none}
+#gmapbox.playing .mp-hud{top:calc(10px + env(safe-area-inset-top,0px));left:max(10px,env(safe-area-inset-left,0px));right:max(10px,env(safe-area-inset-right,0px))}
+#gmapbox.playing .mphint{top:calc(70px + env(safe-area-inset-top,0px))}
+#gmapbox.playing .mpcmp{position:absolute;top:100%;right:0;margin-top:44px}
+#gmapbox.playing .mpmute{top:calc(70px + env(safe-area-inset-top,0px))}
+#gmapbox.playing .maplibregl-ctrl-top-left{top:calc(112px + env(safe-area-inset-top,0px))}
+#gmapbox.playing .maplibregl-ctrl-bottom-left,#gmapbox.playing .maplibregl-ctrl-bottom-right{display:block;bottom:0}
+#gmapbox.playing .modes,#gmapbox.playing .maplibregl-ctrl-scale,#gmapbox.playing .maplibregl-ctrl-geolocate,#gmapbox.playing .maplibregl-ctrl-fullscreen{display:none}
+#gmapbox.playing .joy{bottom:calc(46px + env(safe-area-inset-bottom,0px))}
+#gmapbox.playing .mpact{bottom:calc(46px + env(safe-area-inset-bottom,0px))}
+#gmapbox.playing .mpwincard{bottom:calc(46px + env(safe-area-inset-bottom,0px));max-width:520px;margin-inline:auto}
+#gmapbox.playing .gfly{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px))}
+.mpm{width:0;height:0;overflow:visible}
+.mpm>.mpspot{position:absolute;left:-29px;bottom:0}
+.mpm>.mpo{position:absolute;left:0;bottom:0;width:0;height:0;pointer-events:none}
+.mpo .mptree{bottom:0}
+.mpm>.mpinfo{position:absolute;left:0;bottom:0;transform:translateX(-50%);animation:none;display:flex;flex-direction:column;align-items:center;background:none;border:0;padding:0;cursor:pointer}
+.mpinfo i{font-style:normal;font-size:30px;line-height:1.1;display:block;animation:bobI 1.8s ease-in-out infinite}
+@keyframes bobI{50%{transform:translateY(-6px)}}
+.mpinfo.seen i{animation:none;opacity:.65}
+.mpchar .aim{position:absolute;left:calc(50% + 34px);bottom:-6px;width:34px;height:13px;margin-left:-17px;border-radius:50%;border:2px dashed rgba(255,255,255,.95);background:rgba(88,176,74,.3);box-shadow:0 0 0 1px rgba(0,0,0,.25);animation:aimP 1.2s ease-in-out infinite}
+.mpchar.flip .aim{left:calc(50% - 34px)}
+.mpchar.walk .aim{opacity:.55}.mpchar.dig .aim,.mpchar.noaim .aim{display:none}
+@keyframes aimP{50%{transform:scale(1.15)}}
+.mpbf{position:absolute;left:60%;bottom:70px;font-size:18px;pointer-events:none;animation:bfly 6s ease-in-out infinite}
+#gmapbox.before .mpbf{opacity:0}
 /* ===== soft premium restyle ===== */
 :root{
   --bg:#F8F5EF; --surface:#FFFFFF; --surface2:#F1ECE3; --line:#EAE3D7;
@@ -1459,7 +1552,7 @@ function styleMap(map){
   const firstBld=(layers.find(l=>/building/.test(l.id))||{}).id||firstSym;
   const dem={type:'raster-dem',tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],tileSize:256,encoding:'terrarium',maxzoom:14,attribution:'التضاريس © Mapzen'};
   try{
-    map.addSource('sat',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:19,attribution:'صور الأقمار الصناعية © Esri'});
+    map.addSource('sat',{type:'raster',tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],tileSize:256,maxzoom:18,attribution:'صور الأقمار الصناعية © Esri'});
     map.addSource('dem',dem); map.addSource('dem2',dem);
     map.addLayer({id:'hills',type:'hillshade',source:'dem2',paint:{'hillshade-exaggeration':.35,'hillshade-shadow-color':'#5B4A36','hillshade-highlight-color':'#FFFFFF'}},firstBld);
     map.addLayer({id:'sat',type:'raster',source:'sat',layout:{visibility:'none'}},firstBld);
@@ -1542,7 +1635,7 @@ function initMaps(){
   }catch(e){ console.warn(e); mapFail(); return; } }
 }
 function mapFail(){ GL=false; killMaps(); const y=scrollY; render(); scrollTo(0,y); }
-function killMaps(){ mpStop(); MAPS.forEach(m=>{try{m.remove();}catch(_){}}); MAPS=[]; MV.home=MV.detail=MV.pin=MV.game=null; cancelAnimationFrame(WD.raf); WD.view=null; }
+function killMaps(){ mpStop(); cancelAnimationFrame(ST.raf); ST.run=false; stopAudio(); MAPS.forEach(m=>{try{m.remove();}catch(_){}}); MAPS=[]; MV.home=MV.detail=MV.pin=MV.game=null; cancelAnimationFrame(WD.raf); WD.view=null; }
 function localDB(){
   const K='wj_localdb'; let data; try{data=JSON.parse(localStorage.getItem(K))||{};}catch(_){data={};}
   const subs=[]; const save=()=>{ try{localStorage.setItem(K,JSON.stringify(data));}catch(_){ throw {code:'quota_exceeded'}; } };
@@ -1773,7 +1866,7 @@ function envScreen(){
   return `<div class="screen">
   <section class="env-hero"${WPHOTO_URL['المها العربي']?` style="--ph:url(${WPHOTO_URL['المها العربي']})"`:''}><div><h1>بيئتنا</h1><p>ازرع شجرة في غابة وجهتي، وتعرّف على الحيوانات والنباتات اللي تعيش معنا في السعودية.</p></div></section>
   <div class="seg" role="tablist"><button type="button" role="tab" data-etab="forest" aria-selected="${envTab==='forest'}">🎮 رحلة الزراعة</button><button type="button" role="tab" data-etab="wild" aria-selected="${envTab==='wild'}">🐾 الحياة الفطرية</button></div>
-  ${envTab==='forest'?gameHTML()+`<p class="note" style="text-align:center">الأشجار في اللعبة افتراضية · مبادرة السعودية الخضراء تستهدف زراعة ١٠ مليارات شجرة في المملكة</p>`:`<section>
+  ${envTab==='story'?storyHTML():envTab==='forest'?gameHTML()+`<p class="note" style="text-align:center">الأشجار في اللعبة افتراضية · مبادرة السعودية الخضراء تستهدف زراعة ١٠ مليارات شجرة في المملكة</p>`:`<section>
     <div class="chips" id="wf">${Object.entries(WTY).map(([k,t])=>`<button class="chip" data-wf="${k}" aria-pressed="${k===wildF}">${t}</button>`).join('')}</div>
     <div class="grid wgrid" id="wlist" style="margin-top:14px">${wildList()}</div>
   </section>`}</div>`;
@@ -1885,10 +1978,12 @@ function gInitMap(){
   }catch(e){ console.warn(e); }
 }
 function gGo(pid){
-  if(G.flying) return; const p=gpById[pid]; G.flying=true;
+  if(G.flying) return; const p=gpById[pid]; G.flying=true; try{ const C=window.AudioContext||window.webkitAudioContext; if(C&&!AU.ctx){ AU.ctx=new C(); } AU.ctx&&AU.ctx.resume(); }catch(_){}
   const fly=$('#gfly'); if(fly){ fly.hidden=false; $('#gflyt').textContent='رايحين لـ'+p.n+'…'; }
   const done=()=>{ const f=$('#gfly'); if(f) f.classList.add('fade'); setTimeout(()=>{ G.flying=false; gStart(pid); },650); };
-  if(MV.game){ const m=MV.game; let fired=false; const go=()=>{ if(fired) return; fired=true; G.flying=false; mpStart(pid); }; m.once('moveend',go); m.flyTo({center:GLL[pid],zoom:17.3,pitch:62,bearing:-30+Math.random()*60,duration:6000,essential:true,curve:1.7}); setTimeout(go,8000); return; }
+  if(MV.game){ const m=MV.game, box=$('#gmapbox'); let fired=false; const go=()=>{ if(fired) return; fired=true; G.flying=false; if(MV.game===m) mpStart(pid); };
+    if(box){ box.classList.add('playing'); document.documentElement.classList.add('noscroll'); try{ m.resize(); }catch(_){} }
+    m.flyTo({center:GLL[pid],zoom:17.2,pitch:60,bearing:-30+Math.random()*60,duration:6000,essential:true,curve:1.7}); m.once('moveend',go); setTimeout(go,8000); return; }
   const sm=$('#gsvgmap'); if(sm){ const [x,y]=xy(...GLL[pid]); sm.style.transformOrigin=`${x/10}% ${y/8.36}%`; sm.classList.add('zoom'); }
   setTimeout(done,1700);
 }
@@ -1896,15 +1991,15 @@ function gGo(pid){
 const WD={raf:0};
 const depth=y=>.75+(y-62)/30*.45;
 function playHTML(){
-  const p=gpById[G.place], c=byId[p.c], grown=G.spots.filter(s=>s.st==='grown').length, all=grown===G.spots.length;
+  const p=gpById[G.place], c=byId[p.c], grown=G.spots.filter(s=>s.st==='grown').length, all=grown>=GGOAL;
   const bg=placeTrees(p.id).slice(-18).map((t,i)=>{ const x=3+((i+1)*0.618034%1)*94, y=59+((i+1)*0.754877%1)*4; return `<div class="gbgtree" style="left:${x}%;top:${y}%;--s:${.36+((i*7)%5)*.03}"><svg viewBox="-55 -118 110 126">${treeG(t.t,1)}</svg></div>`; }).join('');
   let seed=[...p.id].reduce((a,ch)=>a+ch.charCodeAt(0),0); const r=()=>(seed=(seed*9301+49297)%233280)/233280;
   const props=Array.from({length:16},()=>{ const x=r()*100, y=62+r()*30, k=r(); return `<div class="gprop" style="left:${x}%;top:${y}%;--s:${depth(y)}">${k<.5?'<svg viewBox="0 0 40 20"><ellipse cx="20" cy="14" rx="18" ry="7" fill="#A88A63"/><ellipse cx="16" cy="11" rx="10" ry="6" fill="#BFA07A"/></svg>':'<svg viewBox="0 0 40 26"><g fill="#8C9B5A"><circle cx="12" cy="18" r="8"/><circle cx="22" cy="14" r="10"/><circle cx="31" cy="19" r="7"/></g></svg>'}</div>`; }).join('');
   const facts=(GFACTS[p.id]||[]).map((f,i)=>`<button type="button" class="ginfo" data-ginfo="${i}" style="left:${i?66:30}%;top:${i?70:76}%;--s:${depth(i?70:76)}" aria-label="اكتشف">📜<span>اكتشف</span></button>`).join('');
   const motes=Array.from({length:14},(_,i)=>`<i style="left:${(i*37)%100}%;top:${20+(i*53)%60}%;animation-delay:${-(i*.9)}s;animation-duration:${7+(i%5)}s"></i>`).join('');
   return `<section class="gplay">
-    <div class="ghud"><button type="button" class="btn sec" data-gback>${ic('back')} الخريطة</button><div class="gh-t"><b>${p.n}</b><small>${c.name}</small></div><span class="gcount">🌳 ${nAr(grown)}/${nAr(G.spots.length)}</span></div>
-    <div class="gview" id="gview" style="--g:${grown/G.spots.length}">
+    <div class="ghud"><button type="button" class="btn sec" data-gback>${ic('back')} الخريطة</button><div class="gh-t"><b>${p.n}</b><small>${c.name}</small></div><span class="gcount">🌳 ${nAr(grown)}/${nAr(GGOAL)}</span></div>
+    <div class="gview" id="gview" style="--g:${Math.min(1,grown/GGOAL)}">
       <div class="gfar" id="gfar">${scene(c,1000,625)}</div>
       <div class="gsky"></div><div class="gclouds"></div>
       <div class="gworld" id="gworld">
@@ -1917,18 +2012,20 @@ function playHTML(){
       <div class="gmotes">${motes}</div>
       <div class="glife">${grown>=2?'<span class="bf" style="left:30%;top:52%">🦋</span>':''}${grown>=4?'<span class="bf" style="left:62%;top:58%;animation-delay:-2s">🦋</span>':''}${grown>=3?'<svg class="gbirds2" viewBox="0 0 120 40"><path d="M10 20 q8 -8 16 0 q8 -8 16 0 M60 10 q6 -6 12 0 q6 -6 12 0 M90 26 q5 -5 10 0 q5 -5 10 0" fill="none" stroke="#2F3B36" stroke-width="2.4" stroke-linecap="round"/></svg>':''}</div>
       <div class="gvig"></div>
-      <div class="gpad"><button type="button" data-gmove="-1" aria-label="يسار">◀</button><button type="button" data-gmove="1" aria-label="يمين">▶</button></div>
+      <div class="dpad"><button type="button" data-gdir="0,-1" class="up" aria-label="قدام">▲</button><button type="button" data-gdir="-1,0" class="lf" aria-label="يسار">◀</button><button type="button" data-gdir="1,0" class="rt" aria-label="يمين">▶</button><button type="button" data-gdir="0,1" class="dn" aria-label="ورا">▼</button></div>
       ${grown?`<button type="button" class="gcmp" id="gcmp" aria-pressed="false" data-gcmp>👁 <span>بعد زراعتك</span><small>اضغط وشوف قبل</small></button>`:''}
     </div>
     <div class="gbar card"><div class="gpick"><span>اختر الشجرة:</span>${p.tr.map(t=>`<button type="button" class="gtp" data-gtree="${t}" aria-pressed="${G.sel===t}">${TPHOTO_URL[t]?`<img src="${TPHOTO_URL[t]}" alt="">`:''}${TREES[t].n}</button>`).join('')}</div>
-      <p class="ghint" id="ghint">${gHint()}</p><div id="gcomm">${gProg(p)}</div></div>
+      <div class="mp-act"><p class="ghint" id="ghint">${gHint()}</p><button type="button" class="btn pri" data-gplant>🌱 ازرع هنا</button></div><div id="gcomm">${gProg(p)}</div></div>
     ${all?`<div class="gwin card"><div class="gw-av">${charSVG(G.char)}</div><div><h2>أحييت ${p.n}! 🌿</h2><p>زرعت ${treesW(grown)} وسقيتها، والمكان رجعت له الحياة.${G.saved?'':' (ما انحفظت زراعتك هنا، بس شكرًا على المحاولة 💚)'}</p>
       <div class="row"><button type="button" class="btn sec" data-gcmpshow>👁 قارن قبل وبعد</button><button type="button" class="btn pri" data-cert>📜 شهادتي</button><button type="button" class="btn pri" data-gagain>🌱 جولة ثانية</button><button type="button" class="btn sec" data-gback>الخريطة</button></div></div></div>`:''}
   </section>`;
 }
 const spotHTML=(s,i)=>`<button type="button" class="gspot st-${s.st}" data-spot="${i}" style="left:${s.x}%;top:${s.y}%;--s:${depth(s.y)}" aria-label="حفرة ${i+1}">${s.t?`<div class="gtree"><svg viewBox="-55 -118 110 126">${treeG(s.t,1)}</svg></div>`:''}${s.st==='sapling'?'<span class="gwater">💧</span>':''}</button>`;
-function gHint(){ const s=G.spots; if(s.some(x=>x.st==='sapling')) return '💧 اضغط على قطرة الماء عشان تسقي الشجرة وتكبر.'; if(s.every(x=>x.st==='grown')) return 'خلّصت كل الحفر 🎉'; return '👆 اضغط على الأرض عشان تمشي، أو على حفرة عشان تزرع · المس 📜 عشان تكتشف المكان'; }
-function gSpots(pid,round){ let seed=[...pid].reduce((a,c)=>a+c.charCodeAt(0),0)*31+round*977; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
+function gHint(){ const s=G.spots; if(s.some(x=>x.st==='sapling')) return '💧 المس قطرة الماء عشان تسقي الشجرة وتكبر'; const n=s.filter(x=>x.st==='grown').length; if(n>=GGOAL) return '🎉 وصلت للهدف! تقدر تكمل تزرع أكثر'; return 'حرّك شخصيتك بالأسهم أو المس الأرض، واختر شجرة واضغط ازرع'; }
+function gSpots(pid,round){ return [];
+}
+function gSpotsOld(pid,round){ let seed=[...pid].reduce((a,c)=>a+c.charCodeAt(0),0)*31+round*977; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
   const pts=[]; for(let i=0;i<8;i++){ const x=10+i*11+r()*6, y=66+r()*24; pts.push({x,y,st:'empty',t:null}); } return pts; }
 function gStart(pid){ const p=gpById[pid]; G.place=pid; G.round=store.get('round_'+pid,0); G.spots=gSpots(pid,G.round); G.sel=p.tr[0]; G.fx=.04; G.fy=82; G.step='play'; G.saved=0; render(); const v=$('#gview'); if(v) v.scrollIntoView({behavior:'smooth',block:'center'}); }
 function wInit(){
@@ -1941,7 +2038,7 @@ function wInit(){
     if(!view.isConnected) return;
     const dt=Math.min(.05,(now-WD.last)/1000); WD.last=now;
     let moving=false;
-    if(WD.dir){ WD.tx=null; const sp=WD.ww*.16; G.fx=Math.min(.97,Math.max(.02,G.fx+WD.dir*sp*dt/WD.ww)); moving=true; WD.char.classList.toggle('flip',WD.dir<0); }
+    if(WD.dir||WD.dy){ WD.tx=null; const sp=WD.ww*.16; if(WD.dir){ G.fx=Math.min(.97,Math.max(.02,G.fx+WD.dir*sp*dt/WD.ww)); WD.char.classList.toggle('flip',WD.dir<0); } if(WD.dy) G.fy=Math.min(92,Math.max(63,G.fy+WD.dy*22*dt)); moving=true; }
     else if(WD.tx!=null){ const sp=Math.max(220,WD.vw*.32); const cx=G.fx*WD.ww, dx=WD.tx-cx, dy=(WD.ty-G.fy); const d=Math.hypot(dx,dy*WD.vh/100);
       if(d<4){ G.fx=WD.tx/WD.ww; G.fy=WD.ty; WD.tx=null; const r=WD.resolve; WD.resolve=null; r&&r(); }
       else { const k=Math.min(1,sp*dt/d); G.fx=(cx+dx*k)/WD.ww; G.fy+=dy*k; moving=true; WD.char.classList.toggle('flip',dx<0); } }
@@ -1955,6 +2052,12 @@ function wInit(){
   WD.raf=requestAnimationFrame(loop);
 }
 function gWalk(fx,fy){ return new Promise(res=>{ if(!WD.view){res();return;} if(WD.resolve) WD.resolve(); WD.tx=fx*WD.ww; WD.ty=Math.min(92,Math.max(63,fy)); WD.resolve=res; }); }
+async function gPlantHere(){
+  if(G.busy||!WD.view) return; G.busy=true; const el=$('#gchar'); el.classList.remove('flip'); el.classList.add('dig');
+  const s={x:G.fx*100+3,y:Math.min(92,G.fy+.5),st:'empty',t:null}; G.spots.push(s); const i=G.spots.length-1;
+  const tmp=document.createElement('div'); tmp.innerHTML=spotHTML(s,i); $('#gworld').appendChild(tmp.firstElementChild); gDust(s);
+  await new Promise(r=>setTimeout(r,1100)); el.classList.remove('dig'); s.st='sapling'; s.t=G.sel; G.busy=false; gRefreshScene(i,'plant');
+}
 async function gSpot(i){
   if(G.busy) return; const s=G.spots[i]; if(!s) return;
   if(s.st==='sapling') return gWater(i);
@@ -1969,9 +2072,9 @@ async function gWater(i){
   const sp=document.querySelector(`[data-spot="${i}"]`); if(sp){ sp.classList.add('watering'); const rain=document.createElement('span'); rain.className='grain'; rain.innerHTML='<i></i><i></i><i></i><i></i><i></i><i></i>'; sp.appendChild(rain); }
   await new Promise(r=>setTimeout(r,1000));
   s.st='grown'; G.busy=false; gRefreshScene(i,'grow'); gSave(s.t);
-  const grown=G.spots.filter(x=>x.st==='grown').length; const v=$('#gview'); if(v){ v.style.setProperty('--g',grown/G.spots.length); if(!$('#gcmp')) v.insertAdjacentHTML('beforeend','<button type="button" class="gcmp" id="gcmp" aria-pressed="false" data-gcmp>👁 <span>بعد زراعتك</span><small>اضغط وشوف قبل</small></button>'); }
+  const grown=G.spots.filter(x=>x.st==='grown').length; const v=$('#gview'); if(v){ v.style.setProperty('--g',Math.min(1,grown/GGOAL)); if(!$('#gcmp')) v.insertAdjacentHTML('beforeend','<button type="button" class="gcmp" id="gcmp" aria-pressed="false" data-gcmp>👁 <span>بعد زراعتك</span><small>اضغط وشوف قبل</small></button>'); }
   const life=document.querySelector('.glife'); if(life){ if(grown===2||grown===4){ const b=document.createElement('span'); b.className='bf'; b.textContent='🦋'; b.style.left=(25+grown*9)+'%'; b.style.top=(50+grown*2)+'%'; life.appendChild(b);} if(grown===3&&!life.querySelector('.gbirds2')) life.insertAdjacentHTML('beforeend','<svg class="gbirds2" viewBox="0 0 120 40"><path d="M10 20 q8 -8 16 0 q8 -8 16 0 M60 10 q6 -6 12 0 q6 -6 12 0 M90 26 q5 -5 10 0 q5 -5 10 0" fill="none" stroke="#2F3B36" stroke-width="2.4" stroke-linecap="round"/></svg>'); }
-  if(G.spots.every(x=>x.st==='grown')){ store.set('round_'+G.place,G.round+1); setTimeout(()=>{ const y=scrollY; render(); scrollTo(0,y); const w=document.querySelector('.gwin'); if(w) w.scrollIntoView({behavior:'smooth',block:'center'}); },1100); }
+  if(grown===GGOAL){ store.set('round_'+G.place,G.round+1); setTimeout(()=>{ const y=scrollY; render(); scrollTo(0,y); const w=document.querySelector('.gwin'); if(w) w.scrollIntoView({behavior:'smooth',block:'center'}); },1100); }
 }
 function gRefreshScene(i,anim){
   const s=G.spots[i], sp=document.querySelector(`[data-spot="${i}"]`); if(!sp) return;
@@ -1979,7 +2082,7 @@ function gRefreshScene(i,anim){
   if(anim==='grow') n.insertAdjacentHTML('beforeend','<span class="gplus">+١ 🌿</span>');
   sp.replaceWith(n);
   const h=$('#ghint'); if(h) h.textContent=gHint();
-  const cnt=document.querySelector('.gcount'); if(cnt) cnt.textContent=`🌳 ${nAr(G.spots.filter(x=>x.st==='grown').length)}/${nAr(G.spots.length)}`;
+  const cnt=document.querySelector('.gcount'); if(cnt) cnt.textContent=`🌳 ${nAr(G.spots.filter(x=>x.st==='grown').length)}/${nAr(GGOAL)}`;
 }
 async function gInfo(i){
   const b=document.querySelector(`[data-ginfo="${i}"]`); if(!b||G.busy) return;
@@ -2039,55 +2142,272 @@ async function saveCert(url){
 }
 function gCompare(on){ const v=$('#gview'); if(!v) return; v.classList.toggle('before',on); const b=$('#gcmp'); if(b){ b.setAttribute('aria-pressed',String(on)); b.querySelector('span').textContent=on?'قبل زراعتك':'بعد زراعتك'; } }
 
+const GGOAL=8;
 /* ---------- اللعب على الخريطة الحقيقية (أقمار صناعية) ---------- */
-const MP={on:false,map:null,pid:null,spots:[],chMk:null,ch:null,pos:null,others:[],extra:[],placeMks:[],raf:0,busy:false};
+const MP={on:false,map:null,pid:null,spots:[],chMk:null,ch:null,pos:null,others:[],extra:[],placeMks:[],green:[],raf:0,mraf:0,busy:false,dir:null,step:0};
 const offLL=(c,dx,dy)=>[c[0]+dx/(111320*Math.cos(c[1]*Math.PI/180)),c[1]+dy/110540];
+const mDist=(a,b)=>Math.hypot((b[0]-a[0])*111320*Math.cos(a[1]*Math.PI/180),(b[1]-a[1])*110540);
+/* metres per screen pixel at the character, and screen<->ground conversion that needs no map.project (stays exact with 3D terrain) */
+const mpp=()=>78271.5*Math.cos(MP.pos[1]*Math.PI/180)/Math.pow(2,MP.map.getZoom());
+function scr2m(dx,dy){ const b=MP.map.getBearing()*Math.PI/180, k=mpp(); return [(dx*Math.cos(b)-dy*Math.sin(b))*k,(-dx*Math.sin(b)-dy*Math.cos(b))*k]; }
+const scrX=(e,n)=>{ const b=MP.map.getBearing()*Math.PI/180; return e*Math.cos(b)-n*Math.sin(b); };
+const WALK=175; /* px per second on screen */
 function mpTreeEl(t,scale,cls=''){ const d=document.createElement('div'); d.className='mptree '+cls; d.style.setProperty('--k',scale); d.innerHTML=`<svg viewBox="-55 -118 110 126">${treeG(t,1)}</svg>`; return d; }
+/* every marker gets a plain root element: MapLibre owns the root's transform, so nothing on the root may animate or reposition */
+function mpMark(inner,ll,cls){ const root=document.createElement(inner.tagName==='BUTTON'?'div':'div'); root.className='mpm '+(cls||''); root.appendChild(inner); return new maplibregl.Marker({element:root,anchor:'bottom',opacityWhenCovered:'1'}).setLngLat(ll).addTo(MP.map); }
+function ringPoly(ll,r,n=22){ const c=[]; for(let i=0;i<=n;i++){ const a=i/n*Math.PI*2; c.push(offLL(ll,Math.cos(a)*r,Math.sin(a)*r)); } return {type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[c]}}; }
+function mpGreen(){ const m=MP.map; if(!m||!m.getSource) return; try{ const src=m.getSource('wjgreen'); if(src) src.setData({type:'FeatureCollection',features:MP.green}); }catch(_){} }
 function mpStart(pid){
   const m=MV.game, box=$('#gmapbox'); if(!m||!box) return gStart(pid);
-  const p=gpById[pid], c=GLL[pid]; Object.assign(MP,{on:true,map:m,pid,busy:false,spots:[],others:[],extra:[]}); G.place=pid; G.round=store.get('round_'+pid,0); G.sel=p.tr[0]; G.saved=0;
-  MP.placeMks.forEach(k=>k.remove()); MP.placeMks=[];
-  box.classList.add('playing'); const f=$('#gfly'); if(f){ f.hidden=true; f.classList.remove('fade'); }
+  const p=gpById[pid], c=GLL[pid]; Object.assign(MP,{on:true,map:m,pid,busy:false,spots:[],others:[],extra:[],green:[],dir:null,step:0}); G.place=pid; G.round=store.get('round_'+pid,0); G.sel=p.tr[0]; G.saved=0;
+  MP.placeMks.forEach(k=>{try{k.remove();}catch(_){}}); MP.placeMks=[];
+  box.classList.add('playing'); document.documentElement.classList.add('noscroll'); const f=$('#gfly'); if(f){ f.hidden=true; f.classList.remove('fade'); }
+  /* game camera: the character drives the view, so the map must not pan under the finger or steal the keyboard */
+  try{ m.cooperativeGestures&&m.cooperativeGestures.disable(); }catch(_){}
+  ['dragPan','scrollZoom','doubleClickZoom','keyboard','boxZoom'].forEach(h=>{ try{ m[h].disable(); }catch(_){} });
+  try{ if(!m.getSource('wjgreen')){ m.addSource('wjgreen',{type:'geojson',data:{type:'FeatureCollection',features:[]}}); m.addLayer({id:'wjgreen',type:'fill',source:'wjgreen',paint:{'fill-color':'#58B04A','fill-opacity':.2}}); } }catch(e){ console.warn('green layer',e); }
   let seed=[...pid].reduce((a,ch)=>a+ch.charCodeAt(0),0)*31+G.round*977; const r=()=>(seed=(seed*9301+49297)%233280)/233280;
-  for(let i=0;i<8;i++){ const a=i/8*Math.PI*2+r()*.5, d=35+r()*55; MP.spots.push({ll:offLL(c,Math.cos(a)*d,Math.sin(a)*d),st:'empty',t:null}); }
-  MP.spots.forEach((s,i)=>{ const el=document.createElement('button'); el.type='button'; el.className='mpspot st-empty'; el.dataset.mspot=i; el.setAttribute('aria-label','حفرة '+(i+1)); s.el=el; s.mk=new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat(s.ll).addTo(m); });
-  placeTrees(pid).slice(-24).forEach((t,i)=>{ const a=r()*Math.PI*2, d=90+r()*120; MP.others.push(new maplibregl.Marker({element:mpTreeEl(t.t,.8,'other'),anchor:'bottom'}).setLngLat(offLL(c,Math.cos(a)*d,Math.sin(a)*d)).addTo(m)); });
-  (GFACTS[pid]||[]).forEach((f,i)=>{ const el=document.createElement('button'); el.type='button'; el.className='mpinfo'; el.dataset.minfo=i; el.innerHTML='📜<span>اكتشف</span>'; const ll=offLL(c,i?-70:60,i?40:-50); MP.extra.push(new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat(ll).addTo(m)); el._ll=ll; });
-  MP.pos=offLL(c,-20,-95); const ce=document.createElement('div'); ce.className='char mpchar'; ce.innerHTML=charSVG(G.char)+`<span class="cname">${esc(G.char.name||'')}</span>`; MP.ch=ce;
-  MP.chMk=new maplibregl.Marker({element:ce,anchor:'bottom'}).setLngLat(MP.pos).addTo(m);
-  box.insertAdjacentHTML('beforeend',`<div class="mp-hud" id="mphud"><button type="button" class="btn sec" data-mpback>${ic('back')} الخريطة</button><div class="gh-t"><b>${p.n}</b><small>${byId[p.c].name} · قمر صناعي حقيقي</small></div><span class="gcount" id="mpcount">🌳 ٠/${nAr(MP.spots.length)}</span></div>
-    <div class="mp-bar card" id="mpbar"><div class="gpick">${p.tr.map(t=>`<button type="button" class="gtp" data-gtree="${t}" aria-pressed="${G.sel===t}">${TPHOTO_URL[t]?`<img src="${TPHOTO_URL[t]}" alt="">`:''}${TREES[t].n}</button>`).join('')}</div><p class="ghint" id="mphint">👆 المس الأرض عشان تمشي، أو حفرة 🕳️ عشان تزرع</p></div>
+  MP.pos=offLL(c,-20,-60);
+  placeTrees(pid).slice(-24).forEach(t=>{ const a=r()*Math.PI*2, d=70+r()*130; const ll=offLL(c,Math.cos(a)*d,Math.sin(a)*d); const w=document.createElement('div'); w.className='mpo'; w.appendChild(mpTreeEl(t.t,.8)); MP.others.push(mpMark(w,ll)); MP.green.push(ringPoly(ll,11)); });
+  mpGreen();
+  (GFACTS[pid]||[]).forEach((_,i)=>{ const el=document.createElement('button'); el.type='button'; el.className='mpinfo'; el.dataset.minfo=i; el.innerHTML='<i>📜</i><span>اكتشف</span>'; const ll=offLL(c,i?-70:60,i?40:-50); el._ll=ll; MP.extra.push(mpMark(el,ll)); });
+  const ce=document.createElement('div'); ce.className='char mpchar'; ce.innerHTML=`<i class="aim"></i>${charSVG(G.char)}<span class="cname">${esc(G.char.name||'')}</span>`; MP.ch=ce;
+  MP.chMk=new maplibregl.Marker({element:ce,anchor:'bottom',opacityWhenCovered:'1'}).setLngLat(MP.pos).addTo(m);
+  box.insertAdjacentHTML('beforeend',`<div class="mp-hud" id="mphud"><button type="button" class="btn sec" data-mpback>${ic('back')} الخريطة</button><div class="gh-t"><b>${p.n}</b><small>${byId[p.c].name} · قمر صناعي حقيقي</small></div><span class="gcount" id="mpcount">🌳 ٠/${nAr(GGOAL)}</span></div>
+    <p class="mphint" id="mphint">حرّك بالعصا أو المس الأرض، واضغط 🌱</p>
+    <div class="joy" id="mpjoy" aria-label="عصا التحكم"><i id="mpknob"></i></div>
+    <div class="mpact"><div class="mptrees">${p.tr.map(t=>`<button type="button" class="mpt" data-gtree="${t}" aria-pressed="${G.sel===t}" title="${TREES[t].n}">${TPHOTO_URL[t]?`<img src="${TPHOTO_URL[t]}" alt="">`:''}<span>${TREES[t].n}</span></button>`).join('')}</div>
+      <button type="button" class="actbtn" id="mpactbtn" data-mpact><b id="mpacti">🌱</b><span id="mpactl">ازرع</span></button></div>
+    <button type="button" class="st-mute mpmute" id="mpmute" aria-label="الصوت">${AU.on?'🔊':'🔈'}</button>
     <div class="gbubble mpbub" id="mpbub" hidden></div><div id="mpwin"></div>`);
-  m.easeTo({center:MP.pos,zoom:17.8,pitch:62,duration:1200});
-  m.on('click',mpMapClick);
+  try{ m.resize(); }catch(_){}
+  m.easeTo({center:MP.pos,zoom:17.9,pitch:58,duration:1400});
+  m.on('click',mpMapClick); startAudio(); mpJoyInit();
 }
-function mpMapClick(e){ if(!MP.on||MP.busy) return; if(e.originalEvent&&e.originalEvent.target.closest&&e.originalEvent.target.closest('button')) return; mpWalk([e.lngLat.lng,e.lngLat.lat]); }
-function mpWalk(to){ return new Promise(res=>{ const m=MP.map; cancelAnimationFrame(MP.raf); const from=MP.pos.slice();
-  const a=m.project(from), b=m.project(to); const px=Math.hypot(b.x-a.x,b.y-a.y), ms=Math.min(3200,Math.max(300,px/170*1000));
-  MP.ch.classList.toggle('flip',b.x<a.x); MP.ch.classList.add('walk'); const t0=performance.now();
-  const step=now=>{ if(!MP.on) return res(); const k=Math.min(1,(now-t0)/ms); MP.pos=[from[0]+(to[0]-from[0])*k,from[1]+(to[1]-from[1])*k]; MP.chMk.setLngLat(MP.pos);
-    try{ m.jumpTo({center:[m.getCenter().lng+(MP.pos[0]-m.getCenter().lng)*.08,m.getCenter().lat+(MP.pos[1]-m.getCenter().lat)*.08]}); }catch(_){}
-    if(k<1) MP.raf=requestAnimationFrame(step); else { MP.ch.classList.remove('walk'); m.easeTo({center:MP.pos,duration:600}); res(); } };
+function mpMapClick(e){ if(!MP.on||MP.busy) return; const t=e.originalEvent&&e.originalEvent.target; if(t&&t.closest&&t.closest('button')) return; mpWalk([e.lngLat.lng,e.lngLat.lat]); }
+function mpFace(e,n){ const sx=scrX(e,n); if(Math.abs(sx)>.5) MP.ch.classList.toggle('flip',sx<0); }
+function mpFollow(){ try{ MP.map.jumpTo({center:MP.pos}); }catch(_){} }
+function mpWalk(to){ return new Promise(res=>{ cancelAnimationFrame(MP.raf); cancelAnimationFrame(MP.mraf); MP.dir=null; const from=MP.pos.slice();
+  const dist=mDist(from,to), ms=Math.min(3200,Math.max(250,dist/(WALK*mpp())*1000));
+  mpFace((to[0]-from[0])*Math.cos(from[1]*Math.PI/180),to[1]-from[1]); MP.ch.classList.add('walk'); const t0=performance.now(); let lastStep=t0;
+  const step=now=>{ if(!MP.on) return res(); const k=Math.min(1,(now-t0)/ms); MP.pos=[from[0]+(to[0]-from[0])*k,from[1]+(to[1]-from[1])*k]; MP.chMk.setLngLat(MP.pos); mpFollow();
+    if(now-lastStep>300){ lastStep=now; sfx('step'); }
+    if(k<1) MP.raf=requestAnimationFrame(step); else { MP.ch.classList.remove('walk'); mpUpdateAct(); res(); } };
   MP.raf=requestAnimationFrame(step); }); }
-async function mpSpot(i){
-  const s=MP.spots[i]; if(!s||MP.busy) return;
-  if(s.st==='grown') return;
-  MP.busy=true; await mpWalk(offLL(s.ll,-4,-2));
-  if(s.st==='empty'){ MP.ch.classList.remove('flip'); MP.ch.classList.add('dig'); s.el.classList.add('digging'); await new Promise(r=>setTimeout(r,1100)); MP.ch.classList.remove('dig'); s.el.classList.remove('digging');
-    s.st='sapling'; s.t=G.sel; s.el.className='mpspot st-sapling'; s.el.innerHTML=''; s.el.appendChild(mpTreeEl(s.t,.3,'sap')); s.el.insertAdjacentHTML('beforeend','<span class="gwater">💧</span>'); $('#mphint').textContent='💧 المس قطرة الماء عشان تسقيها وتكبر'; }
-  else if(s.st==='sapling'){ s.el.classList.add('watering'); s.el.insertAdjacentHTML('beforeend','<span class="grain"><i></i><i></i><i></i><i></i><i></i><i></i></span>'); await new Promise(r=>setTimeout(r,1000));
-    s.st='grown'; s.el.className='mpspot st-grown'; s.el.innerHTML=''; const te=mpTreeEl(s.t,1,'grow'); s.el.appendChild(te); s.el.insertAdjacentHTML('beforeend','<span class="gplus">+١ 🌿</span>'); gSave(s.t);
-    const n=MP.spots.filter(x=>x.st==='grown').length; $('#mpcount').textContent=`🌳 ${nAr(n)}/${nAr(MP.spots.length)}`; $('#mphint').textContent=n===MP.spots.length?'خلّصت كل الحفر 🎉':'👆 كمّل: المس حفرة ثانية';
-    if(n===1&&!$('#mpcmp')) $('#mphud').insertAdjacentHTML('beforeend','<button type="button" class="gcmp mpcmp" id="mpcmp" aria-pressed="false" data-mpcmp>👁 <span>بعد زراعتك</span><small>اضغط وشوف قبل</small></button>');
-    if(n===MP.spots.length) setTimeout(mpWin,900); }
-  MP.busy=false;
+function mpNearSap(){ let best=null,bd=1e9; MP.spots.forEach((s,i)=>{ if(s.st!=='sapling') return; const d=mDist(MP.pos,s.ll); if(d<bd){bd=d;best=i;} }); return bd<90*mpp()?best:null; }
+function mpUpdateAct(){ const b=$('#mpactbtn'); if(!b||!MP.on) return; const i=mpNearSap(); b.classList.toggle('water',i!=null); $('#mpacti').textContent=i!=null?'💧':'🌱'; $('#mpactl').textContent=i!=null?'اسقِ':'ازرع'; MP.ch.classList.toggle('noaim',i!=null); }
+function mpAction(){ if(!MP.on||MP.busy) return; const i=mpNearSap(); if(i!=null) mpSpot(i); else mpPlant(); }
+function mpHint(t){ const h=$('#mphint'); if(h) h.textContent=t; }
+async function mpPlant(){
+  if(!MP.on||MP.busy) return; MP.busy=true; MP.dir=null; cancelAnimationFrame(MP.raf); const t=G.sel;
+  const fc=MP.ch.classList.contains('flip')?-1:1, [e,n]=scr2m(fc*34,4), ll=offLL(MP.pos,e,n);
+  MP.ch.classList.remove('walk'); MP.ch.classList.add('dig'); sfx('step');
+  const i=MP.spots.length, el=document.createElement('button'); el.type='button'; el.className='mpspot st-empty digging'; el.dataset.mspot=i; el.setAttribute('aria-label','شجرة '+(i+1));
+  const sp={ll,st:'empty',t:null,el}; MP.spots.push(sp); sp.mk=mpMark(el,ll);
+  await new Promise(r=>setTimeout(r,1100)); if(!MP.on) return; MP.ch.classList.remove('dig');
+  sp.st='sapling'; sp.t=t; el.className='mpspot st-sapling'; el.innerHTML=''; el.appendChild(mpTreeEl(t,.3,'sap')); el.insertAdjacentHTML('beforeend','<span class="gwater">💧</span>');
+  mpHint('💧 اضغط «اسقِ» عشان تكبر الشجرة'); MP.busy=false; sfx('chime'); mpUpdateAct();
 }
-function mpWin(){ store.set('round_'+MP.pid,G.round+1); const p=gpById[MP.pid]; MP.map.easeTo({zoom:16.6,pitch:55,bearing:MP.map.getBearing()+40,duration:2500});
-  $('#mpwin').innerHTML=`<div class="gwin card mpwincard"><div class="gw-av">${charSVG(G.char)}</div><div><h2>أحييت ${p.n}! 🌿</h2><p>زرعت ${treesW(MP.spots.length)} على الأرض الحقيقية.${G.saved?'':' (ما انحفظت زراعتك هنا، بس شكرًا 💚)'}</p>
-    <div class="row"><button type="button" class="btn pri" data-cert>📜 شهادتي</button><button type="button" class="btn sec" data-mpagain>🌱 جولة ثانية</button><button type="button" class="btn sec" data-mpback>الخريطة</button></div></div></div>`; }
-async function mpInfo(i){ const el=document.querySelector(`[data-minfo="${i}"]`); if(!el||MP.busy) return; MP.busy=true; await mpWalk(offLL(el._ll,-4,-2)); MP.busy=false; el.classList.add('seen');
-  const b=$('#mpbub'); b.textContent='💡 '+GFACTS[MP.pid][i]; b.hidden=false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); clearTimeout(mpInfo.t); mpInfo.t=setTimeout(()=>b.hidden=true,6000); }
-function mpStop(){ MP.on=false; cancelAnimationFrame(MP.raf); if(MP.map) try{ MP.map.off('click',mpMapClick); }catch(_){} }
+async function mpSpot(i){
+  const s=MP.spots[i]; if(!s||MP.busy||s.st!=='sapling') return;
+  MP.busy=true; MP.dir=null;
+  if(mDist(MP.pos,s.ll)>60*mpp()){ const [e,n]=scr2m(-34,-4); await mpWalk(offLL(s.ll,e,n)); MP.ch.classList.remove('flip'); }
+  if(!MP.on) return;
+  s.el.classList.add('watering'); s.el.insertAdjacentHTML('beforeend','<span class="grain"><i></i><i></i><i></i><i></i><i></i><i></i></span>'); await new Promise(r=>setTimeout(r,1000)); if(!MP.on) return;
+  s.st='grown'; s.el.className='mpspot st-grown'; s.el.innerHTML=''; s.el.appendChild(mpTreeEl(s.t,1,'grow')); s.el.insertAdjacentHTML('beforeend','<span class="gplus">+١ 🌿</span>');
+  const n=MP.spots.filter(x=>x.st==='grown').length; if(n%3===0) s.el.insertAdjacentHTML('beforeend','<span class="mpbf">🦋</span>');
+  MP.green.push(ringPoly(s.ll,18),ringPoly(s.ll,10)); mpGreen(); gSave(s.t); sfx('win');
+  const c=$('#mpcount'); if(c) c.textContent=`🌳 ${nAr(n)}/${nAr(GGOAL)}`; mpHint(n>=GGOAL?'🎉 وصلت للهدف! كمّل لو تبي':'🌱 امشِ لمكان ثاني وازرع');
+  if(n===1&&!$('#mpcmp')&&$('#mphud')) $('#mphud').insertAdjacentHTML('beforeend','<button type="button" class="gcmp mpcmp" id="mpcmp" aria-pressed="false" data-mpcmp>👁 <span>بعد زراعتك</span><small>اضغط وشوف قبل</small></button>');
+  MP.busy=false; mpUpdateAct(); if(n===GGOAL) setTimeout(mpWin,900);
+}
+function mpCompare(on){ const b=$('#mpcmp'), box=$('#gmapbox'); if(!b||!box) return; b.setAttribute('aria-pressed',String(on)); b.querySelector('span').textContent=on?'قبل زراعتك':'بعد زراعتك'; box.classList.toggle('before',on); try{ MP.map.setLayoutProperty('wjgreen','visibility',on?'none':'visible'); }catch(_){} }
+function mpWin(){ if(!MP.on) return; store.set('round_'+MP.pid,G.round+1); const p=gpById[MP.pid]; try{ MP.map.easeTo({center:MP.pos,zoom:17.1,pitch:55,bearing:MP.map.getBearing()+40,duration:2600}); }catch(_){}
+  $('#mpwin').innerHTML=`<div class="gwin card mpwincard"><div class="gw-av">${charSVG(G.char)}</div><div><h2>أحييت ${p.n}! 🌿</h2><p>زرعت ${treesW(GGOAL)} على الأرض الحقيقية، وتقدر تكمل تزرع أكثر.${G.saved?'':' (ما انحفظت زراعتك هنا، بس شكرًا 💚)'}</p>
+    <div class="row"><button type="button" class="btn pri" data-cert>📜 شهادتي</button><button type="button" class="btn sec" data-mpclosewin>كمّل الزراعة</button><button type="button" class="btn sec" data-mpagain>🌱 جولة ثانية</button><button type="button" class="btn sec" data-mpback>الخريطة</button></div></div></div>`; }
+function mpCloseWin(){ const w=$('#mpwin'); if(w) w.innerHTML=''; try{ MP.map.easeTo({center:MP.pos,zoom:17.9,pitch:58,duration:900}); }catch(_){} }
+async function mpInfo(i){ const el=document.querySelector(`[data-minfo="${i}"]`); if(!el||MP.busy) return; MP.busy=true; const [e,n]=scr2m(-30,-4); await mpWalk(offLL(el._ll,e,n)); MP.busy=false; if(!MP.on) return; el.classList.add('seen'); sfx('chime');
+  const b=$('#mpbub'); if(!b) return; b.textContent='💡 '+GFACTS[MP.pid][i]; b.hidden=false; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); clearTimeout(mpInfo.t); mpInfo.t=setTimeout(()=>{ b.hidden=true; },6000); }
+function mpMove(){
+  cancelAnimationFrame(MP.mraf); cancelAnimationFrame(MP.raf); let last=performance.now();
+  const step=now=>{ if(!MP.on||!MP.dir||MP.busy){ MP.ch&&MP.ch.classList.remove('walk'); MP.on&&mpUpdateAct(); return; } const dt=Math.min(.05,(now-last)/1000); last=now;
+    const mag=Math.hypot(MP.dir[0],MP.dir[1]);
+    if(mag>.01){ const [e,n]=scr2m(MP.dir[0]*WALK*dt,MP.dir[1]*WALK*dt); MP.pos=offLL(MP.pos,e,n); MP.chMk.setLngLat(MP.pos); if(Math.abs(MP.dir[0])>.15) MP.ch.classList.toggle('flip',MP.dir[0]<0); MP.ch.classList.add('walk'); mpFollow();
+      MP.step+=dt*mag; if(MP.step>.3){ MP.step=0; sfx('step'); mpUpdateAct(); } }
+    else MP.ch.classList.remove('walk');
+    MP.mraf=requestAnimationFrame(step); };
+  MP.mraf=requestAnimationFrame(step);
+}
+function mpJoyInit(){
+  const j=$('#mpjoy'), kn=$('#mpknob'); if(!j) return; let id=null;
+  const set=e=>{ const r=j.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, R=r.width/2-14; let dx=e.clientX-cx, dy=e.clientY-cy; const d=Math.hypot(dx,dy); if(d>R){ dx*=R/d; dy*=R/d; } kn.style.transform=`translate(${dx}px,${dy}px)`; MP.dir=Math.min(1,d/R)<.12?[0,0]:[dx/R,dy/R]; };
+  j.addEventListener('pointerdown',e=>{ if(!MP.on||MP.busy) return; e.preventDefault(); id=e.pointerId; try{ j.setPointerCapture(id); }catch(_){} j.classList.add('on'); set(e); mpMove(); });
+  j.addEventListener('pointermove',e=>{ if(e.pointerId===id) set(e); });
+  const end=e=>{ if(e.pointerId!==id) return; id=null; j.classList.remove('on'); kn.style.transform=''; MP.dir=null; };
+  j.addEventListener('pointerup',end); j.addEventListener('pointercancel',end); j.addEventListener('lostpointercapture',end);
+}
+function mpStop(){ if(MP.on) stopAudio(); MP.on=false; MP.dir=null; MP.busy=false; cancelAnimationFrame(MP.raf); cancelAnimationFrame(MP.mraf); document.documentElement.classList.remove('noscroll'); if(MP.map) try{ MP.map.off('click',mpMapClick); }catch(_){} }
+/* ---------- الحكاية: الفصل الأول (canvas, procedural art + audio) ---------- */
+const ST={raf:0,run:false};
+function storyHTML(){
+  return `<section class="story">
+    <div class="st-box" id="stbox"><canvas id="stc"></canvas>
+      <div class="st-sub" id="stsub" hidden></div>
+      <div class="st-hud"><span id="stdrops">💧 ٠/٣</span><button type="button" class="st-mute" id="stmute" aria-label="الصوت">🔊</button></div>
+      <div class="st-act" id="stact" hidden></div>
+      <div class="st-ctl"><button type="button" data-sdir="-1" aria-label="يسار">◀</button><button type="button" data-sdir="1" aria-label="يمين">▶</button></div>
+      <div class="st-cover" id="stcover"><div><small>الحكاية · الفصل الأول</small><h2>نخلة جدّتي</h2><p>جدّة ريم عطتها شتلة نخلة وقالت: «ازرعيها عند العين قبل لا تغيب الشمس». امشي مع ريم وحوارها الصغير عبر النفود، واجمعي ٣ قطرات ماء للشتلة.</p><button type="button" class="btn pri" id="ststart">▶ ابدئي الحكاية</button><small class="st-tip">الأسهم أو اضغطي مطولًا يمين ويسار الشاشة · شغّلي الصوت 🎧</small></div></div>
+    </div>
+    <p class="note" style="text-align:center">الرسم والأصوات والموسيقى كلها مصنوعة بالكود · الفصل الثاني قريبًا</p>
+  </section>`;
+}
+function storyInit(){
+  cancelAnimationFrame(ST.raf); const cv=$('#stc'); if(!cv) return; stopAudio();
+  const box=$('#stbox'), x=cv.getContext('2d');
+  const S=Object.assign(ST,{cv,x,box,run:false,px:40,dir:0,face:1,walkT:0,camel:10,drops:[{x:290,got:0},{x:610,got:0},{x:930,got:0}],got:0,phase:'idle',grow:0,end:false,said:{},gaz:{x:780,run:0},t0:performance.now(),last:performance.now(),stepAcc:0,dust:[],birds:[],leaves:[]});
+  let seed=7; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  for(let i=0;i<60;i++) S.dust.push({x:rnd()*1600,y:40+rnd()*55,s:.3+rnd()*.7,v:.6+rnd()});
+  const fit=()=>{ const r=box.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1); cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d); S.W=cv.width; S.H=cv.height; S.k=S.H/100; };
+  fit(); S.fit=fit;
+  // grain
+  const g=document.createElement('canvas'); g.width=g.height=128; const gx=g.getContext('2d'); const id=gx.createImageData(128,128); for(let i=0;i<id.data.length;i+=4){ const v=Math.random()*255; id.data[i]=id.data[i+1]=id.data[i+2]=v; id.data[i+3]=14; } gx.putImageData(id,0,0); S.grain=x.createPattern(g,'repeat');
+  const loop=now=>{ if(!cv.isConnected){ stopAudio(); return; } const dt=Math.min(.05,(now-S.last)/1000); S.last=now; stUpdate(dt,now/1000); stDraw(now/1000); S.raf=requestAnimationFrame(loop); };
+  S.raf=requestAnimationFrame(loop);
+}
+const END=1260, gY=x=>78+2.6*Math.sin(x*.011)+1.6*Math.sin(x*.027+1.3);
+const lerp=(a,b,t)=>a+(b-a)*t, mix=(c1,c2,t)=>{ const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)); const a=p(c1),b=p(c2); return `rgb(${a.map((v,i)=>Math.round(lerp(v,b[i],t))).join(',')})`; };
+function say(key,txt,ms=4200){ if(ST.said[key]) return; ST.said[key]=1; const s=$('#stsub'); if(!s) return; s.textContent=txt; s.hidden=false; s.classList.remove('in'); void s.offsetWidth; s.classList.add('in'); clearTimeout(say.t); say.t=setTimeout(()=>{ s.hidden=true; },ms); }
+function stUpdate(dt,t){
+  const S=ST; if(!S.run) return;
+  if(S.phase==='walk'){
+    if(S.dir){ S.px=Math.max(20,Math.min(END+40,S.px+S.dir*34*dt)); S.face=S.dir; S.walkT+=dt*9; S.stepAcc+=dt; if(S.stepAcc>.28){ S.stepAcc=0; sfx('step'); } }
+    S.camel=lerp(S.camel,S.px-18*S.face,Math.min(1,dt*2.2));
+    S.drops.forEach((d,i)=>{ if(!d.got&&Math.abs(d.x-S.px)<7){ d.got=1; S.got++; sfx('chime'); $('#stdrops').textContent=`💧 ${nAr(S.got)}/٣`; say('d'+i,['قطرة أولى 💧 الشتلة بتفرح','باقي وحدة… الشمس قاعدة تنزل','٣ قطرات! يلا نروح للعين قبل الغروب'][S.got-1]); } });
+    if(S.px>120) say('a','ريم: «حوارنا تعب؟ شوي ونوصل يا صغيري»');
+    if(Math.abs(S.gaz.x-S.px)<60&&!S.gaz.run){ S.gaz.run=1; say('g','غزال ريم 🦌 … شافنا وهرب للكثبان'); }
+    if(S.gaz.run) S.gaz.x+=dt*60;
+    const act=$('#stact');
+    if(S.px>END-30){ if(S.got>=3){ act.hidden=false; if(!$('#stplant')) act.innerHTML='<button type="button" class="btn pri" id="stplant">🌱 ازرعي الشتلة</button>'; } else { act.hidden=true; say('need'+S.got,'وصلنا العين… بس الشتلة تحتاج ٣ قطرات ماء. ارجعي اجمعيها 💧',3500); S.said['need'+S.got]=1; } }
+    else act.hidden=true;
+  }
+  if(S.phase==='plant'||S.phase==='end'){ S.px=lerp(S.px,END+16,Math.min(1,dt*2)); S.face=-1; }
+  if(S.phase==='plant'){ S.grow=Math.min(1,S.grow+dt*.35); S.camel=lerp(S.camel,S.px-16,dt); if(S.grow>=1&&!S.end){ S.end=true; S.phase='end'; sfx('win'); store.set('story1',1); stEnd(); } }
+  S.dust.forEach(d=>{ d.x-=d.v*dt*22; if(d.x<-20) d.x+=1600; });
+  if(Math.random()<dt*.15&&S.birds.length<3) S.birds.push({x:S.px+120,y:14+Math.random()*16,v:10+Math.random()*8,ph:Math.random()*6});
+  S.birds.forEach(b=>b.x-=b.v*dt); S.birds=S.birds.filter(b=>b.x>S.px-140);
+}
+function stEnd(){ const a=$('#stact'); a.hidden=false; a.innerHTML=`<div class="st-endc"><h3>انتهى الفصل الأول 🌴</h3><p>زرعت ريم نخلة جدّتها عند العين، والحوار نام جنبها تحت النجوم.</p><div class="row"><button type="button" class="btn sec" id="stagain">↺ عيدي الفصل</button><a class="btn pri" href="#env" data-goenv="forest">🎮 ازرعي في رحلة الزراعة</a></div></div>`; say('end','ريم: «نامي يا نخلتي… بكرة نجيب لك ماء» 🌙',6000); }
+function stDraw(t){
+  const S=ST, x=S.x, k=S.k, W=S.W, H=S.H; if(!W) return;
+  const prog=Math.min(1,S.px/END), dusk=S.phase==='end'?1:prog*.85+ (S.phase==='plant'?S.grow*.15:0);
+  const camX=Math.max(0,Math.min(END+80-W/k*.62,S.px-W/k*.38));
+  // sky
+  const sky=x.createLinearGradient(0,0,0,H); sky.addColorStop(0,mix('#8FB8D9','#2B2350',dusk)); sky.addColorStop(.55,mix('#F6D7A8','#C2566B',dusk)); sky.addColorStop(1,mix('#F9E3BF','#F09A5B',dusk)); x.fillStyle=sky; x.fillRect(0,0,W,H);
+  if(dusk>.7){ x.fillStyle=`rgba(255,255,255,${(dusk-.7)*2.4})`; for(let i=0;i<40;i++){ const sx=(i*97.3%W), sy=(i*53.7%(H*.45)); x.fillRect(sx,sy,1.6,1.6); } }
+  // sun
+  const sx=W*.68-camX*.04*k, sy=lerp(H*.22,H*.62,dusk);
+  const sg=x.createRadialGradient(sx,sy,0,sx,sy,26*k); sg.addColorStop(0,'rgba(255,240,200,.95)'); sg.addColorStop(.18,mix('#FFE6A8','#FF9A5A',dusk)); sg.addColorStop(.19,'rgba(255,200,140,.35)'); sg.addColorStop(1,'rgba(255,180,120,0)'); x.fillStyle=sg; x.beginPath(); x.arc(sx,sy,26*k,0,7); x.fill();
+  // dune layers
+  const layer=(par,base,amp,f,c1,c2,seed)=>{ x.beginPath(); x.moveTo(0,H); for(let px=0;px<=W+8;px+=8){ const wx=px/k+camX*par; const y=base+amp*Math.sin(wx*f+seed)+amp*.5*Math.sin(wx*f*2.3+seed*2)+amp*.25*Math.sin(wx*f*5.1+seed); x.lineTo(px,y*k); } x.lineTo(W,H); x.closePath(); const g=x.createLinearGradient(0,(base-amp)*k,0,H); g.addColorStop(0,c1); g.addColorStop(1,c2); x.fillStyle=g; x.fill(); };
+  layer(.15,52,5,.012,mix('#E8B98A','#8C5A6E',dusk),mix('#D9A57A','#6E4A5E',dusk),1);
+  layer(.35,60,6,.016,mix('#E2A86C','#B0605A',dusk),mix('#C98E58','#7E4A4A',dusk),3);
+  layer(.6,68,5,.02,mix('#E9B675','#C77A55',dusk),mix('#D59A5C','#8E5A44',dusk),5);
+  // gazelle on mid dunes
+  if(S.gaz.x-camX*.6<W/k+20){ const gx=(S.gaz.x-camX*.6)*k, gy=(66+2*Math.sin(S.gaz.x*.02))*k; x.save(); x.translate(gx,gy); x.scale(k*.5,k*.5); x.fillStyle=mix('#B9834F','#5A3A30',dusk); const b=S.gaz.run?Math.sin(t*18)*3:0; x.beginPath(); x.ellipse(0,-14+b,9,4.5,0,0,7); x.fill(); x.beginPath(); x.moveTo(7,-16+b); x.lineTo(11,-26+b); x.lineTo(14,-25+b); x.lineTo(11,-15+b); x.fill(); x.strokeStyle=x.fillStyle; x.lineWidth=1.4; [-6,-3,4,7].forEach((lx,i)=>{ x.beginPath(); x.moveTo(lx,-11+b); x.lineTo(lx+(S.gaz.run?Math.sin(t*18+i*2)*3:0),0); x.stroke(); }); x.beginPath(); x.moveTo(12,-26+b); x.lineTo(10,-33+b); x.moveTo(13,-26+b); x.lineTo(13,-33+b); x.stroke(); x.restore(); }
+  // ground
+  x.beginPath(); x.moveTo(0,H); for(let px=0;px<=W+6;px+=6){ x.lineTo(px,gY(px/k+camX)*k); } x.lineTo(W,H); x.closePath();
+  const gg=x.createLinearGradient(0,72*k,0,H); gg.addColorStop(0,mix('#F0C489','#D98C62',dusk)); gg.addColorStop(1,mix('#D69A5A','#7C4A3A',dusk)); x.fillStyle=gg; x.fill();
+  x.strokeStyle=`rgba(150,90,40,${.18-.08*dusk})`; x.lineWidth=k*.35; for(let r=0;r<9;r++){ x.beginPath(); for(let px=0;px<=W;px+=10){ const wx=px/k+camX; const y=gY(wx)+3+r*2.4+.8*Math.sin(wx*.08+r); px?x.lineTo(px,y*k):x.moveTo(px,y*k); } x.stroke(); }
+  // oasis
+  const ox=(END-camX)*k; if(ox<W+60*k){ const oy=gY(END)*k; x.fillStyle=mix('#5FA3B5','#3A4E7A',dusk); x.beginPath(); x.ellipse(ox+8*k,oy+3*k,22*k,3.4*k,0,0,7); x.fill(); x.fillStyle='rgba(255,255,255,.25)'; x.beginPath(); x.ellipse(ox+2*k,oy+2.4*k,10*k,.8*k,0,0,7); x.fill();
+    x.strokeStyle=mix('#5E8A3A','#2F4A30',dusk); x.lineWidth=k*.5; for(let i=0;i<14;i++){ const rx=ox+(-14+i*3.2)*k+(i%2?16*k:0), ry=oy+1.5*k; x.beginPath(); x.moveTo(rx,ry); x.quadraticCurveTo(rx+Math.sin(t*1.5+i)*1.2*k,ry-5*k,rx+Math.sin(t*1.5+i)*2*k,ry-(7+i%3*2)*k); x.stroke(); }
+    if(S.got>=3&&S.phase==='walk'){ x.fillStyle=`rgba(255,240,170,${.35+.25*Math.sin(t*4)})`; x.beginPath(); x.ellipse(ox-6*k,oy,6*k,1.6*k,0,0,7); x.fill(); }
+    if(S.phase!=='walk') drawPalm(x,ox-6*k,oy,S.grow,t,dusk,k);
+  }
+  // drops
+  S.drops.forEach(d=>{ if(d.got) return; const dx=(d.x-camX)*k, dy=(gY(d.x)-12+Math.sin(t*2+d.x)*1.2)*k; const gl=x.createRadialGradient(dx,dy,0,dx,dy,5*k); gl.addColorStop(0,'rgba(180,230,255,.9)'); gl.addColorStop(1,'rgba(120,200,255,0)'); x.fillStyle=gl; x.beginPath(); x.arc(dx,dy,5*k,0,7); x.fill(); x.fillStyle='#5DB7EA'; x.beginPath(); x.moveTo(dx,dy-2.4*k); x.quadraticCurveTo(dx+1.8*k,dy+.2*k,dx,dy+1.6*k); x.quadraticCurveTo(dx-1.8*k,dy+.2*k,dx,dy-2.4*k); x.fill(); });
+  // camel + girl
+  drawCamel(x,(S.camel-camX)*k,gY(S.camel)*k,k*1.35,S.face,S.dir&&S.phase==='walk'?S.walkT:0,dusk,S.phase==='end');
+  drawGirl(x,(S.px-camX)*k,gY(S.px)*k,k*1.4,S.face,S.dir&&S.phase==='walk'?S.walkT:0,t,dusk,S.phase);
+  // birds
+  x.strokeStyle=mix('#3B3B4A','#1E1A2E',dusk); x.lineWidth=k*.35; S.birds.forEach(b=>{ const bx=(b.x-camX*.9)*k, by=b.y*k, w=Math.sin(t*8+b.ph)*1.2*k; x.beginPath(); x.moveTo(bx-2*k,by-w); x.quadraticCurveTo(bx-1*k,by-1*k,bx,by); x.quadraticCurveTo(bx+1*k,by-1*k,bx+2*k,by-w); x.stroke(); });
+  // dust
+  x.fillStyle=`rgba(255,235,200,${.5-.2*dusk})`; S.dust.forEach(d=>{ const dx=((d.x-camX*1.2)%1600+1600)%1600; if(dx/1*k<W) { x.beginPath(); x.arc(dx*k*.5,d.y*k,d.s*k*.35,0,7); x.fill(); } });
+  // foreground grass
+  x.strokeStyle=mix('#8A7A3A','#3A3428',dusk); x.lineWidth=k*.45; for(let i=-2;i<14;i++){ const fx=(i*42-((camX*1.35)%42))*k, fy=H; for(let j=0;j<5;j++){ x.beginPath(); x.moveTo(fx+j*1.4*k,fy); x.quadraticCurveTo(fx+j*1.4*k+Math.sin(t*1.8+i+j)*1.5*k,fy-5*k,fx+(j-2)*2*k+Math.sin(t*1.8+i)*2*k,fy-(8+j%3*3)*k); x.stroke(); } }
+  // grain + vignette
+  x.fillStyle=S.grain; x.fillRect(0,0,W,H);
+  const vg=x.createRadialGradient(W/2,H*.55,H*.3,W/2,H*.55,W*.75); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,`rgba(40,20,30,${.35+.2*dusk})`); x.fillStyle=vg; x.fillRect(0,0,W,H);
+}
+function drawGirl(x,gx,gy,k,face,wt,t,dusk,phase){
+  x.save(); x.translate(gx,gy); x.scale(k*face,k); const kneel=phase==='plant'||phase==='end'?1:0;
+  const sw=Math.sin(wt)*.5, bob=wt?Math.abs(Math.sin(wt))*.4:Math.sin(t*2)*.15;
+  const skin=mix('#E8B48C','#B87A62',dusk), dress=mix('#2F8A78','#1E4A50',dusk), hair=mix('#3A2416','#1C120D',dusk);
+  x.translate(0,kneel*2.2-bob);
+  // legs
+  x.strokeStyle=mix('#3B3640','#201C28',dusk); x.lineWidth=1.3; x.lineCap='round';
+  [[sw,1],[-sw,0]].forEach(([a])=>{ x.beginPath(); x.moveTo(0,-6); x.lineTo(Math.sin(a)*3.2,kneel?-2:0); x.stroke(); });
+  // hair back
+  x.fillStyle=hair; for(let i=0;i<7;i++){ x.beginPath(); x.arc(-2.4-i*.25+Math.sin(t*2+i)*.25,-15.5+i*1.2,1.7,0,7); x.fill(); }
+  // dress
+  x.fillStyle=dress; x.beginPath(); x.moveTo(-1.6,-12.5); x.quadraticCurveTo(2.2,-12.8,2.4,-11); x.lineTo(3.6+sw*.6,-5); x.quadraticCurveTo(0,-4.2,-3.4+sw*.4,-5); x.closePath(); x.fill();
+  // arm holding pot
+  x.strokeStyle=skin; x.lineWidth=1.1; x.beginPath(); x.moveTo(1,-11.5); x.lineTo(3.2,-9); x.stroke();
+  if(phase!=='plant'&&phase!=='end'){ x.fillStyle=mix('#B5653A','#6E3A2A',dusk); x.beginPath(); x.moveTo(2.4,-9.6); x.lineTo(5.2,-9.6); x.lineTo(4.8,-7.4); x.lineTo(2.8,-7.4); x.fill(); x.strokeStyle=mix('#4F9A4A','#2E5A36',dusk); x.lineWidth=.45; [[-1.4,-2.8],[0,-3.4],[1.4,-2.6]].forEach(([a,b])=>{ x.beginPath(); x.moveTo(3.8,-9.6); x.quadraticCurveTo(3.8+a*.5,-9.6+b*.7,3.8+a,-9.6+b); x.stroke(); }); }
+  // head
+  x.fillStyle=skin; x.beginPath(); x.arc(.6,-14.6,2.1,0,7); x.fill();
+  x.fillStyle='#1E140D'; x.beginPath(); x.arc(1.6,-14.9,.28,0,7); x.fill();
+  x.fillStyle='rgba(240,120,110,.35)'; x.beginPath(); x.arc(1.4,-14,.55,0,7); x.fill();
+  // hair top curls
+  x.fillStyle=hair; [[-.6,-16.6,1.5],[.8,-16.9,1.3],[-1.8,-15.6,1.4],[2.1,-16.2,.9],[-1.6,-13.8,1.2]].forEach(([a,b,r],i)=>{ x.beginPath(); x.arc(a,b+Math.sin(t*3+i)*.08,r,0,7); x.fill(); });
+  x.restore();
+}
+function drawCamel(x,cx,cy,k,face,wt,dusk,sleep){
+  x.save(); x.translate(cx,cy); x.scale(k*face,k); const c=mix('#D2A36A','#7A5240',dusk), d=mix('#B9874F','#5E3E32',dusk);
+  if(sleep){ x.fillStyle=c; x.beginPath(); x.ellipse(0,-2.2,6,2.4,0,0,7); x.fill(); x.beginPath(); x.ellipse(-.5,-4,2.6,1.6,0,0,7); x.fill(); x.beginPath(); x.ellipse(5.5,-2,1.8,1.1,0,0,7); x.fill(); x.fillStyle='#fff'; x.font='3px sans-serif'; x.fillText('z',7,-6); x.restore(); return; }
+  const sw=Math.sin(wt)*.6, bob=wt?Math.abs(Math.sin(wt*1))*.3:0; x.translate(0,-bob);
+  x.strokeStyle=d; x.lineWidth=.9; x.lineCap='round';
+  [[-3.6,sw],[-2.2,-sw],[2.6,-sw],[4,sw]].forEach(([lx,a])=>{ x.beginPath(); x.moveTo(lx,-5.5); x.lineTo(lx+Math.sin(a)*2,0); x.stroke(); });
+  x.fillStyle=c; x.beginPath(); x.ellipse(0,-7,5.6,2.8,0,0,7); x.fill(); x.beginPath(); x.ellipse(-.6,-9.2,2.8,2.2,0,0,7); x.fill();
+  x.strokeStyle=c; x.lineWidth=1.6; x.beginPath(); x.moveTo(4.6,-7.6); x.quadraticCurveTo(6.6,-9,6.8,-12.4); x.stroke();
+  x.fillStyle=c; x.beginPath(); x.ellipse(7.6,-12.8,1.8,1.1,.2,0,7); x.fill(); x.fillStyle='#1E140D'; x.beginPath(); x.arc(7.8,-13.1,.22,0,7); x.fill();
+  x.strokeStyle=d; x.lineWidth=.4; x.beginPath(); x.moveTo(-5.4,-7.4); x.quadraticCurveTo(-6.6,-6,-6,-4.4); x.stroke();
+  x.restore();
+}
+function drawPalm(x,px,py,s,t,dusk,u){
+  if(s<=0) return; x.save(); x.translate(px,py); const h=26*s*u, tx=1.4*u*s;
+  x.strokeStyle=mix('#8A6239','#4A3328',dusk); x.lineCap='round'; x.lineWidth=Math.max(1,1.7*u*Math.max(.35,s));
+  x.beginPath(); x.moveTo(0,0); x.quadraticCurveTo(2.4*u*s,-h*.5,tx,-h); x.stroke();
+  x.strokeStyle='rgba(60,40,20,.35)'; x.lineWidth=Math.max(1,.25*u); for(let i=1;i<8;i++){ const yy=-h*i/8; x.beginPath(); x.moveTo(-.8*u*s+tx*i/8,yy); x.lineTo(.8*u*s+tx*i/8+.6*u*s,yy-.3*u); x.stroke(); }
+  x.strokeStyle=mix('#4F9A4A','#244A34',dusk); x.lineWidth=Math.max(1,.9*u*Math.max(.4,s));
+  for(let i=0;i<10;i++){ const a=-Math.PI/2+(i-4.5)*.38+Math.sin(t*1.3+i)*.05, L=(9+(i%3)*2)*u*s; const ex=tx+Math.cos(a)*L, ey=-h+Math.sin(a)*L*.35+L*.5;
+    x.beginPath(); x.moveTo(tx,-h); x.quadraticCurveTo(tx+Math.cos(a)*L*.55,-h+Math.sin(a)*L*.7,ex,ey); x.stroke(); }
+  if(s>.9){ x.fillStyle=mix('#C0702E','#6E3A22',dusk); [[-1,1.4],[1,1.8],[0,2.6],[-.6,2.2]].forEach(([a,b])=>{ x.beginPath(); x.arc(tx+a*u,-h+b*u,.75*u,0,7); x.fill(); }); }
+  x.restore();
+}
+/* ---- procedural audio ---- */
+const AU={ctx:null,on:true,nodes:[],timer:0};
+function startAudio(){
+  try{ const C=window.AudioContext||window.webkitAudioContext; if(!C) return; const ctx=AU.ctx||new C(); AU.ctx=ctx; ctx.resume();
+    const master=ctx.createGain(); master.gain.value=AU.on?.9:0; master.connect(ctx.destination); AU.master=master;
+    const nb=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate), d=nb.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; AU.noise=nb;
+    const wn=ctx.createBufferSource(); wn.buffer=nb; wn.loop=true; const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=420; bp.Q.value=.6; const wg=ctx.createGain(); wg.gain.value=.05;
+    const lfo=ctx.createOscillator(), lg=ctx.createGain(); lfo.frequency.value=.13; lg.gain.value=.035; lfo.connect(lg); lg.connect(wg.gain); wn.connect(bp); bp.connect(wg); wg.connect(master); wn.start(); lfo.start();
+    const dr=ctx.createOscillator(), dg=ctx.createGain(); dr.type='sine'; dr.frequency.value=73.4; dg.gain.value=.028; dr.connect(dg); dg.connect(master); dr.start();
+    AU.nodes=[wn,lfo,dr];
+    const scale=[293.7,311.1,370,392,440,466.2,523.3,587.3];
+    const play=()=>{ if(!AU.ctx) return; const n=scale[Math.floor(Math.random()*scale.length)]*(Math.random()<.25?.5:1); pluck(n,.11); if(Math.random()<.3) setTimeout(()=>pluck(n*(Math.random()<.5?1.5:1.335),.06),180); AU.timer=setTimeout(play,700+Math.random()*1100); };
+    AU.timer=setTimeout(play,900);
+  }catch(_){}
+}
+function pluck(f,v){ const c=AU.ctx; if(!c) return; const t=c.currentTime, o=c.createOscillator(), g=c.createGain(), lp=c.createBiquadFilter(); o.type='triangle'; o.frequency.value=f; lp.type='lowpass'; lp.frequency.value=1800; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+.01); g.gain.exponentialRampToValueAtTime(.0008,t+1.6); o.connect(lp); lp.connect(g); g.connect(AU.master); o.start(t); o.stop(t+1.7); }
+function sfx(k){ const c=AU.ctx; if(!c||!AU.master) return; const t=c.currentTime;
+  if(k==='step'){ const s=c.createBufferSource(); s.buffer=AU.noise; const f=c.createBiquadFilter(); f.type='lowpass'; f.frequency.value=700; const g=c.createGain(); g.gain.setValueAtTime(.09,t); g.gain.exponentialRampToValueAtTime(.001,t+.12); s.connect(f); f.connect(g); g.connect(AU.master); s.start(t,Math.random()); s.stop(t+.13); }
+  if(k==='chime'){ [880,1318.5,1760].forEach((f,i)=>setTimeout(()=>pluck(f,.12),i*90)); }
+  if(k==='win'){ [587.3,740,880,1174.7].forEach((f,i)=>setTimeout(()=>pluck(f,.13),i*160)); }
+}
+function stopAudio(){ clearTimeout(AU.timer); AU.nodes.forEach(n=>{try{n.stop();}catch(_){}}); AU.nodes=[]; if(AU.master){ try{AU.master.disconnect();}catch(_){} AU.master=null; } }
+function stStart(){ const c=$('#stcover'); if(c) c.classList.add('out'); setTimeout(()=>{ if(c) c.hidden=true; },600); ST.run=true; ST.phase='walk'; startAudio(); setTimeout(()=>say('i','ريم: «يلا يا حوار… العين ورا هالكثبان» 🐪',4600),700); }
 
 let gQueue=Promise.resolve();
 function gSave(t){
@@ -2103,11 +2423,17 @@ function refreshGame(){
 }
 
 /* game movement: pad + keys */
-document.addEventListener('pointerdown',e=>{ const b=e.target.closest('[data-gmove]'); if(b&&WD.view&&!G.busy){ WD.dir=+b.dataset.gmove; e.preventDefault(); } });
-['pointerup','pointercancel','pointerleave'].forEach(ev=>document.addEventListener(ev,()=>{ WD.dir=0; }));
-document.addEventListener('keydown',e=>{ if(!WD.view||G.busy||/INPUT|TEXTAREA/.test(e.target.tagName)) return; if(e.key==='ArrowLeft'){WD.dir=-1;e.preventDefault();} if(e.key==='ArrowRight'){WD.dir=1;e.preventDefault();} });
-document.addEventListener('keyup',e=>{ if(e.key==='ArrowLeft'||e.key==='ArrowRight') WD.dir=0; });
-addEventListener('resize',()=>{ if(WD.view&&WD.measure) WD.measure(); });
+document.addEventListener('pointerdown',e=>{ const sd=e.target.closest('[data-sdir]'); if(sd&&ST.run){ ST.dir=+sd.dataset.sdir; e.preventDefault(); return; }
+  if(e.target.id==='stc'&&ST.run&&ST.phase==='walk'){ const r=e.target.getBoundingClientRect(); ST.dir=(e.clientX-r.left)>r.width/2?1:-1; return; }
+  const md=e.target.closest('[data-mdir]'); if(md&&MP.on&&!MP.busy){ cancelAnimationFrame(MP.raf); MP.dir=md.dataset.mdir.split(',').map(Number); e.preventDefault(); mpMove(); return; }
+  const gd=e.target.closest('[data-gdir]'); if(gd&&WD.view&&!G.busy){ const [dx,dy]=gd.dataset.gdir.split(',').map(Number); WD.dir=dx; WD.dy=dy; e.preventDefault(); return; }
+  const b=e.target.closest('[data-gmove]'); if(b&&WD.view&&!G.busy){ WD.dir=+b.dataset.gmove; e.preventDefault(); } });
+['pointerup','pointercancel','pointerleave'].forEach(ev=>document.addEventListener(ev,()=>{ WD.dir=0; WD.dy=0; MP.dir=null; ST.dir=0; }));
+document.addEventListener('keydown',e=>{ if(ST.run&&ST.cv&&ST.cv.isConnected&&!/INPUT|TEXTAREA/.test(e.target.tagName)){ if(e.key==='ArrowRight'||e.key==='d'){ST.dir=1;e.preventDefault();return;} if(e.key==='ArrowLeft'||e.key==='a'){ST.dir=-1;e.preventDefault();return;} }
+  if(MP.on&&!MP.busy&&!/INPUT|TEXTAREA/.test(e.target.tagName)){ const k={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key]; if(k){ e.preventDefault(); if(!MP.dir){ MP.dir=k; mpMove(); } else MP.dir=k; return; } if(e.key===' '||e.key==='Enter'){ e.preventDefault(); mpAction(); return; } }
+  if(!WD.view||G.busy||/INPUT|TEXTAREA/.test(e.target.tagName)) return; if(e.key==='ArrowUp'){WD.dy=-1;e.preventDefault();} if(e.key==='ArrowDown'){WD.dy=1;e.preventDefault();} if(e.key==='ArrowLeft'){WD.dir=-1;e.preventDefault();} if(e.key==='ArrowRight'){WD.dir=1;e.preventDefault();} });
+document.addEventListener('keyup',e=>{ if(/Arrow/.test(e.key)||e.key==='a'||e.key==='d'){ WD.dir=0; WD.dy=0; MP.dir=null; ST.dir=0; } });
+addEventListener('resize',()=>{ if(WD.view&&WD.measure) WD.measure(); if(ST.cv&&ST.cv.isConnected&&ST.fit) ST.fit(); });
 /* ---------- router & events ---------- */
 function render(){
   killMaps(); const r=current(); const V=$('#view');
@@ -2118,7 +2444,7 @@ function render(){
   else if(r==='fav'){ V.innerHTML=favScreen(); document.title='المفضلة · وجهتي'; }
   else if(r==='admin'){ V.innerHTML=adminScreen(); document.title='الإدارة · وجهتي'; }
   else { V.innerHTML=home(); document.title='وجهتي'; }
-  drawNav(); window.scrollTo(0,0); startEye(); startCollage(); initMaps(); gInitMap(); wInit(); loadWx(); xRelax(); if(xSel&&$('#xstage')) xShow(xSel);
+  drawNav(); window.scrollTo(0,0); startEye(); startCollage(); initMaps(); gInitMap(); wInit(); storyInit(); loadWx(); xRelax(); if(xSel&&$('#xstage')) xShow(xSel);
 }
 let planDays=null;
 document.addEventListener('click',e=>{
@@ -2128,11 +2454,23 @@ document.addEventListener('click',e=>{
   const gs=t.closest('[data-spot]'); if(gs){ gSpot(+gs.dataset.spot); return; }
   const gt=t.closest('[data-gtree]'); if(gt){ G.sel=gt.dataset.gtree; document.querySelectorAll('[data-gtree]').forEach(b=>b.setAttribute('aria-pressed',String(b===gt))); return; }
   const gpl=t.closest('[data-gplace]'); if(gpl){ gGo(gpl.dataset.gplace); return; }
+  if(t.closest('[data-mpact]')){ mpAction(); return; }
+  if(t.closest('#mpmute')){ AU.on=!AU.on; if(AU.master) AU.master.gain.value=AU.on?.9:0; $('#mpmute').textContent=AU.on?'🔊':'🔈'; return; }
+  if(t.closest('#mpjoy')) return;
+  if(t.closest('#ststart')){ stStart(); return; }
+  if(t.closest('#stplant')){ ST.phase='plant'; $('#stact').hidden=true; sfx('chime'); say('p','ريم تحفر بإيدها الصغيرة… وتسقي الشتلة بالقطرات الثلاث 💧',5000); return; }
+  if(t.closest('#stagain')){ storyInit(); return; }
+  if(t.closest('#stmute')){ AU.on=!AU.on; if(AU.master) AU.master.gain.value=AU.on?.9:0; $('#stmute').textContent=AU.on?'🔊':'🔈'; return; }
+  if(t.closest('[data-sdir]')) return;
+  if(t.closest('[data-mplant]')){ mpPlant(); return; }
+  if(t.closest('[data-mpclosewin]')){ mpCloseWin(); return; }
+  if(t.closest('[data-mdir]')||t.closest('[data-gdir]')) return;
+  if(t.closest('[data-gplant]')){ gPlantHere(); return; }
   const ms=t.closest('[data-mspot]'); if(ms){ mpSpot(+ms.dataset.mspot); return; }
   const mi=t.closest('[data-minfo]'); if(mi){ mpInfo(+mi.dataset.minfo); return; }
-  if(t.closest('[data-mpback]')){ mpStop(); G.step=null; G.place=null; render(); const b=$('#gmapbox'); if(b) b.scrollIntoView({block:'center'}); return; }
+  if(t.closest('[data-mpback]')){ mpStop(); G.flying=false; G.step=null; G.place=null; render(); const b=$('#gmapbox'); if(b) b.scrollIntoView({block:'center'}); return; }
   if(t.closest('[data-mpagain]')){ const pid=MP.pid; mpStop(); G.step=null; render(); setTimeout(()=>gGo(pid),400); return; }
-  if(t.closest('[data-mpcmp]')){ const b=$('#mpcmp'), on=b.getAttribute('aria-pressed')!=='true'; b.setAttribute('aria-pressed',String(on)); b.querySelector('span').textContent=on?'قبل زراعتك':'بعد زراعتك'; $('#gmapbox').classList.toggle('before',on); return; }
+  if(t.closest('[data-mpcmp]')){ mpCompare($('#mpcmp').getAttribute('aria-pressed')!=='true'); return; }
   if(t.closest('[data-cert]')){ makeCert(); return; }
   if(t.closest('[data-certsave]')){ const m=t.closest('.certm'); saveCert(m.dataset.url); return; }
   if(t.closest('[data-certclose]')||t.classList.contains('certm')){ const m=t.closest('.certm'); if(m) m.remove(); return; }
